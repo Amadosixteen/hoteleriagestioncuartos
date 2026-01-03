@@ -6,13 +6,14 @@
     $primaryGuest = $hasReservation ? $reservation->primaryGuest : null;
     
     // Determine status color
-    $statusColors = [
-        'available' => 'bg-sky-100 border-sky-300 hover:bg-sky-200',
-        'occupied' => 'bg-green-100 border-green-300 hover:bg-green-200',
-        'expired' => 'bg-red-100 border-red-300 hover:bg-red-200',
+    $statusClasses = [
+        'available' => 'status-available',
+        'occupied' => 'status-occupied',
+        'expired' => 'status-expired',
+        'cleaning' => 'status-cleaning',
     ];
     
-    $colorClass = $statusColors[$room->status] ?? $statusColors['available'];
+    $colorClass = $statusClasses[$room->status] ?? $statusClasses['available'];
 @endphp
 
 <div 
@@ -21,7 +22,7 @@
     @if($hasReservation) 
         data-reservation-id="{{ $reservation->id }}"
     @endif
-    @click="window.dispatchEvent(new CustomEvent('open-reservation-modal', { detail: { roomId: {{ $room->id }}, hasReservation: {{ $hasReservation ? 'true' : 'false' }} } }))"
+    @click="window.dispatchEvent(new CustomEvent('open-reservation-modal', { detail: { roomId: {{ $room->id }}, hasReservation: {{ $hasReservation ? 'true' : 'false' }}, status: '{{ $room->status }}' } }))"
 >
     <!-- Room Number -->
     <div class="text-center mb-2">
@@ -60,9 +61,15 @@
             {{ $reservation->getFormattedRemainingTime() }}
         </div>
     @else
-        <!-- Available Status -->
-        <div class="text-xs text-center text-gray-600 font-medium">
-            Disponible
+        <!-- Available/Cleaning/Expired Status -->
+        <div class="status-label text-xs text-center text-gray-600 font-medium">
+            @if($room->status === 'cleaning')
+                En Limpieza
+            @elseif($room->status === 'expired')
+                Tiempo Vencido
+            @else
+                Disponible
+            @endif
         </div>
     @endif
 </div>

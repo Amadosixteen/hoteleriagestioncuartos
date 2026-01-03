@@ -7,6 +7,7 @@ use App\Models\Reservation;
 use App\Models\Guest;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class ReservationController extends Controller
 {
@@ -29,101 +30,39 @@ class ReservationController extends Controller
         ]);
 
         $room = Room::findOrFail($validated['room_id']);
+        $this->authorize('update', $room);
         
         // Check if room is available
         if (!$room->isAvailable()) {
             return back()->with('error', 'El cuarto no está disponible');
         }
 
+        $durationHours = (int) $validated['duration_hours'];
         $checkInAt = Carbon::now();
-        $checkOutAt = $checkInAt->copy()->addHours($validated['duration_hours']);
+        $checkOutAt = $checkInAt->copy()->addHours($durationHours);
 
         // Check if any guest has a vehicle
         $hasVehicle = collect($validated['guests'])->contains(function ($guest) {
             return !empty($guest['vehicle_plate']);
         });
 
-        // Create reservation
-        $reservation = Reservation::create([
-            'room_id' => $room->id,
-            'check_in_at' => $checkInAt,
-            'check_out_at' => $checkOutAt,
-            'duration_hours' => $validated['duration_hours'],
-            'has_vehicle' => $hasVehicle,
-            'status' => 'active',
-        ]);
+        return DB::transaction(function () use ($validated, $room, $checkInAt, $checkOutAt, $hasVehicle) {
+            // If room was expired, complete the previous reservation
+            if ($room->status === 'expired' && $room->activeReservation) {
+                $room->activeReservation->update(['status' => 'completed']);
+            }
 
-        // Create guests
-        foreach ($validated['guests'] as $index => $guestData) {
-            Guest::create([
-                'reservation_id' => $reservation->id,
-                'document_type' => $guestData['document_type'],
-                'custom_document_type' => $guestData['custom_document_type'] ?? null,
-                'document_number' => $guestData['document_number'],
-                'first_name' => $guestData['first_name'],
-                'last_name' => $guestData['last_name'],
-                'gender' => $guestData['gender'] ?? null,
-                'vehicle_plate' => $guestData['vehicle_plate'] ?? null,
-                'is_primary' => $index === 0,
-            ]);
-        }
-
-        // Update room status
-        $room->update(['status' => 'occupied']);
-
-        return redirect()->route('dashboard')->with('success', 'Reserva creada exitosamente');
-    }
-
-    /**
-     * Get reservation details.
-     */
-    public function show($id)
-    {
-        $reservation = Reservation::with('guests')->findOrFail($id);
-        return response()->json($reservation);
-    }
-
-    /**
-     * Update reservation.
-     */
-    public function update(Request $request, $id)
-    {
-        $validated = $request->validate([
-            'duration_hours' => 'sometimes|integer|min:1',
-            'guests' => 'sometimes|array|min:1',
-            'guests.*.id' => 'nullable|exists:guests,id',
-            'guests.*.document_type' => 'required|in:dni,carnet_extranjeria,otro',
-            'guests.*.custom_document_type' => 'nullable|string',
-            'guests.*.document_number' => 'required|string',
-            'guests.*.first_name' => 'required|string',
-            'guests.*.last_name' => 'required|string',
-            'guests.*.gender' => 'nullable|in:masculino,femenino,otro',
-            'guests.*.vehicle_plate' => 'nullable|string',
-        ]);
-
-        $reservation = Reservation::findOrFail($id);
-
-        // Update duration if provided
-        if (isset($validated['duration_hours'])) {
-            $checkOutAt = Carbon::parse($reservation->check_in_at)->addHours($validated['duration_hours']);
-            $reservation->update([
+            // Create reservation
+            $reservation = Reservation::create([
+                'room_id' => $room->id,
+                'check_in_at' => $checkInAt,
                 'check_out_at' => $checkOutAt,
                 'duration_hours' => $validated['duration_hours'],
+                'has_vehicle' => $hasVehicle,
+                'status' => 'active',
             ]);
-        }
 
-        // Update guests if provided
-        if (isset($validated['guests'])) {
-            // Check if any guest has a vehicle
-            $hasVehicle = collect($validated['guests'])->contains(function ($guest) {
-                return !empty($guest['vehicle_plate']);
-            });
-            
-            $reservation->update(['has_vehicle' => $hasVehicle]);
-
-            // Delete existing guests and create new ones
-            $reservation->guests()->delete();
-            
+            // Create guests
             foreach ($validated['guests'] as $index => $guestData) {
                 Guest::create([
                     'reservation_id' => $reservation->id,
@@ -137,9 +76,93 @@ class ReservationController extends Controller
                     'is_primary' => $index === 0,
                 ]);
             }
-        }
 
-        return redirect()->route('dashboard')->with('success', 'Reserva actualizada exitosamente');
+            // Update room status
+            $room->update(['status' => 'occupied']);
+
+            if (request()->wantsJson()) {
+                return response()->json(['message' => 'Reserva creada exitosamente']);
+            }
+
+            return redirect()->route('dashboard')->with('success', 'Reserva creada exitosamente');
+        });
+    }
+
+    /**
+     * Get reservation details.
+     */
+    public function show($id)
+    {
+        $reservation = Reservation::with('guests')->findOrFail($id);
+        $this->authorize('view', $reservation);
+        return response()->json($reservation);
+    }
+
+    /**
+     * Update reservation.
+     */
+    public function update(Request $request, $id)
+    {
+        $validated = $request->validate([
+            'duration_hours' => 'sometimes|integer|min:1',
+            'guests' => 'sometimes|array|min:1',
+            'guests.*.id' => 'nullable',
+            'guests.*.document_type' => 'required|in:dni,carnet_extranjeria,otro',
+            'guests.*.custom_document_type' => 'nullable|string',
+            'guests.*.document_number' => 'required|string',
+            'guests.*.first_name' => 'required|string',
+            'guests.*.last_name' => 'required|string',
+            'guests.*.gender' => 'nullable|in:masculino,femenino,otro',
+            'guests.*.vehicle_plate' => 'nullable|string',
+        ]);
+
+        $reservation = Reservation::findOrFail($id);
+        $this->authorize('update', $reservation);
+
+        return DB::transaction(function () use ($validated, $reservation) {
+            // Update duration if provided
+            if (isset($validated['duration_hours'])) {
+                $durationHours = (int) $validated['duration_hours'];
+                $checkOutAt = Carbon::parse($reservation->check_in_at)->addHours($durationHours);
+                $reservation->update([
+                    'check_out_at' => $checkOutAt,
+                    'duration_hours' => $durationHours,
+                ]);
+            }
+
+            // Update guests if provided
+            if (isset($validated['guests'])) {
+                // Check if any guest has a vehicle
+                $hasVehicle = collect($validated['guests'])->contains(function ($guest) {
+                    return !empty($guest['vehicle_plate']);
+                });
+                
+                $reservation->update(['has_vehicle' => $hasVehicle]);
+
+                // Delete existing guests and create new ones
+                $reservation->guests()->delete();
+                
+                foreach ($validated['guests'] as $index => $guestData) {
+                    Guest::create([
+                        'reservation_id' => $reservation->id,
+                        'document_type' => $guestData['document_type'],
+                        'custom_document_type' => $guestData['custom_document_type'] ?? null,
+                        'document_number' => $guestData['document_number'],
+                        'first_name' => $guestData['first_name'],
+                        'last_name' => $guestData['last_name'],
+                        'gender' => $guestData['gender'] ?? null,
+                        'vehicle_plate' => $guestData['vehicle_plate'] ?? null,
+                        'is_primary' => $index === 0,
+                    ]);
+                }
+            }
+
+            if (request()->wantsJson()) {
+                return response()->json(['message' => 'Reserva actualizada exitosamente']);
+            }
+
+            return redirect()->route('dashboard')->with('success', 'Reserva actualizada exitosamente');
+        });
     }
 
     /**
@@ -148,11 +171,18 @@ class ReservationController extends Controller
     public function checkout($id)
     {
         $reservation = Reservation::findOrFail($id);
-        
-        $reservation->update(['status' => 'completed']);
-        $reservation->room->update(['status' => 'available']);
+        $this->authorize('update', $reservation);
 
-        return redirect()->route('dashboard')->with('success', 'Check-out realizado exitosamente');
+        return DB::transaction(function () use ($reservation) {
+            $reservation->update(['status' => 'completed']);
+            $reservation->room->update(['status' => 'available']);
+
+            if (request()->wantsJson()) {
+                return response()->json(['message' => 'Check-out realizado exitosamente']);
+            }
+
+            return redirect()->route('dashboard')->with('success', 'Check-out realizado exitosamente');
+        });
     }
 
     /**
@@ -196,5 +226,31 @@ class ReservationController extends Controller
         });
 
         return response()->json($roomsData);
+    }
+
+    /**
+     * Toggle cleaning status for a room.
+     */
+    public function toggleCleaning($id)
+    {
+        $room = Room::findOrFail($id);
+        $this->authorize('update', $room);
+        
+        if ($room->status === 'available' || $room->status === 'expired') {
+            // Complete previous reservation if it exists (e.g. if expired)
+            if ($room->activeReservation) {
+                $room->activeReservation->update(['status' => 'completed']);
+            }
+
+            $room->update(['status' => 'cleaning']);
+            $message = 'Cuarto puesto en limpieza';
+        } elseif ($room->status === 'cleaning') {
+            $room->update(['status' => 'available']);
+            $message = 'Limpieza terminada. Cuarto disponible.';
+        } else {
+            return response()->json(['message' => 'El cuarto está ocupado y no puede entrar en limpieza ahora.'], 422);
+        }
+
+        return response()->json(['message' => $message]);
     }
 }

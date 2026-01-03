@@ -23,6 +23,7 @@ class User extends Authenticatable
         'password',
         'tenant_id',
         'google_id',
+        'is_active',
     ];
 
     /**

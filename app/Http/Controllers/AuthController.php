@@ -10,9 +10,12 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Laravel\Socialite\Facades\Socialite;
 use Illuminate\Support\Str;
+use App\Traits\HasTenantSetup;
 
 class AuthController extends Controller
 {
+    use HasTenantSetup;
+
     /**
      * Redirect to Google OAuth.
      */
@@ -29,34 +32,22 @@ class AuthController extends Controller
         try {
             $googleUser = Socialite::driver('google')->user();
             
-            // Find or create user
-            $user = User::where('google_id', $googleUser->id)
-                ->orWhere('email', $googleUser->email)
+            // Buscar usuario solo por email o google_id (no creamos si no existe)
+            $user = User::where('email', $googleUser->email)
+                ->orWhere('google_id', $googleUser->id)
                 ->first();
             
-            if ($user) {
-                // Update existing user
-                $user->update([
-                    'google_id' => $googleUser->id,
-                    'name' => $googleUser->name,
-                    'email' => $googleUser->email,
-                ]);
-            } else {
-                // Create new user and tenant
-                $tenant = Tenant::create([
-                    'name' => $googleUser->name . "'s Hotel",
-                    'slug' => Str::slug($googleUser->email),
-                ]);
-                
-                $user = User::create([
-                    'name' => $googleUser->name,
-                    'email' => $googleUser->email,
-                    'google_id' => $googleUser->id,
-                    'tenant_id' => $tenant->id,
-                ]);
-                
-                // Create 3 floors with 10 rooms each
-                $this->createFloorsAndRooms($tenant);
+            if (!$user) {
+                return redirect()->route('login')->with('error', 'Su cuenta no está registrada en el sistema. Por favor, contacte con soporte al +51 905 562 625.');
+            }
+
+            if (!$user->is_active) {
+                return redirect()->route('login')->with('error', 'Su suscripción no está activa. Por favor, contacte con soporte al +51 905 562 625.');
+            }
+
+            // Actualizar google_id si es necesario
+            if (!$user->google_id) {
+                $user->update(['google_id' => $googleUser->id]);
             }
             
             Auth::login($user);
@@ -68,28 +59,7 @@ class AuthController extends Controller
         }
     }
 
-    /**
-     * Create floors and rooms for a new tenant.
-     */
-    private function createFloorsAndRooms(Tenant $tenant)
-    {
-        for ($floorNumber = 1; $floorNumber <= 3; $floorNumber++) {
-            $floor = Floor::create([
-                'tenant_id' => $tenant->id,
-                'floor_number' => $floorNumber,
-                'name' => "Piso {$floorNumber}",
-            ]);
-            
-            // Create 10 rooms for this floor
-            for ($roomNumber = 1; $roomNumber <= 10; $roomNumber++) {
-                Room::create([
-                    'floor_id' => $floor->id,
-                    'room_number' => $roomNumber,
-                    'status' => 'available',
-                ]);
-            }
-        }
-    }
+
 
     /**
      * Logout user.

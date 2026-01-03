@@ -23,6 +23,7 @@ Route::middleware(['auth', 'tenant'])->group(function () {
     Route::post('/reservations/{id}/checkout', [ReservationController::class, 'checkout'])->name('reservations.checkout');
     
     Route::get('/api/rooms/status', [ReservationController::class, 'getRoomStatus'])->name('api.rooms.status');
+    Route::post('/rooms/{id}/toggle-cleaning', [ReservationController::class, 'toggleCleaning'])->name('rooms.toggle-cleaning');
     
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 });

@@ -27,7 +27,7 @@ class Room extends Model
      */
     public function activeReservation(): HasOne
     {
-        return $this->hasOne(Reservation::class)->where('status', 'active');
+        return $this->hasOne(Reservation::class)->whereIn('status', ['active', 'expired']);
     }
 
     /**
@@ -43,7 +43,7 @@ class Room extends Model
      */
     public function isAvailable(): bool
     {
-        return $this->status === 'available';
+        return $this->status === 'available' || $this->status === 'expired';
     }
 
     /**

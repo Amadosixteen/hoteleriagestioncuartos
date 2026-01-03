@@ -12,14 +12,15 @@ class DashboardController extends Controller
      */
     public function index()
     {
-        $floors = Floor::with([
-            'rooms.activeReservation.guests',
-            'rooms.activeReservation' => function ($query) {
-                $query->with('primaryGuest');
-            }
-        ])
-        ->orderBy('floor_number')
-        ->get();
+        $floors = Floor::where('tenant_id', auth()->user()->tenant_id)
+            ->with([
+                'rooms.activeReservation.guests',
+                'rooms.activeReservation' => function ($query) {
+                    $query->with('primaryGuest');
+                }
+            ])
+            ->orderBy('floor_number')
+            ->get();
         
         return view('dashboard', compact('floors'));
     }

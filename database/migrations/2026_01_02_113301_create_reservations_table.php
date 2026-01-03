@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('reservations', function (Blueprint $table) {
             $table->id();
             $table->foreignId('room_id')->constrained()->onDelete('cascade');
-            $table->timestamp('check_in_at');
-            $table->timestamp('check_out_at');
+            $table->dateTime('check_in_at');
+            $table->dateTime('check_out_at');
             $table->integer('duration_hours');
             $table->boolean('has_vehicle')->default(false);
             $table->enum('status', ['active', 'completed', 'expired'])->default('active');
