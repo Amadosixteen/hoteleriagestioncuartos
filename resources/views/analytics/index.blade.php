@@ -12,7 +12,7 @@
     <!-- Resumen de Tarjetas -->
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-            <h3 class="text-sm font-medium text-gray-500 uppercase tracking-wider">Ocupación Total</h3>
+            <h3 class="text-sm font-medium text-gray-500 uppercase tracking-wider">Ocupación Total Hoy</h3>
             <p class="text-3xl font-bold text-blue-600 mt-2">{{ round($overallOccupancy, 1) }}%</p>
             <p class="text-xs text-gray-400 mt-1">{{ $occupiedRooms }} de {{ $totalRooms }} habitaciones</p>
         </div>
