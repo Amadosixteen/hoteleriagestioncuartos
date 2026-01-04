@@ -3,12 +3,17 @@
 @section('title', 'Gestión de Habitaciones')
 
 @section('content')
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8" x-data="roomManagement()">
     <div class="md:flex md:items-center md:justify-between mb-8">
         <div class="flex-1 min-w-0">
             <h2 class="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:truncate">Gestión de Habitaciones</h2>
-            <p class="mt-1 text-sm text-gray-500">Añade o elimina habitaciones de los pisos de tu hotel.</p>
+            <p class="mt-1 text-sm text-gray-500">Añade, elimina o mueve habitaciones entre pisos (Drag & Drop).</p>
         </div>
+    </div>
+
+    <!-- Alert for success/error (optional, if you want local alerts) -->
+    <div x-show="message.text" x-transition class="mb-4 p-4 rounded-md" :class="message.type === 'success' ? 'bg-green-50 text-green-800 border border-green-200' : 'bg-red-50 text-red-800 border border-red-200'" style="display: none;">
+        <span x-text="message.text"></span>
     </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -43,15 +48,16 @@
         <div class="lg:col-span-2 space-y-6">
             @forelse($floors as $floor)
             <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-                <div class="bg-gray-50 px-6 py-4 border-b border-gray-200">
+                <div class="bg-gray-50 px-6 py-4 border-b border-gray-200 flex justify-between items-center">
                     <h3 class="text-lg font-medium text-gray-900">{{ $floor->name }}</h3>
+                    <span class="text-xs text-gray-400">Arrastra para mover</span>
                 </div>
                 <div class="p-6">
-                    <div class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 gap-4">
+                    <div class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 gap-4 sortable-container" data-floor-id="{{ $floor->id }}">
                         @forelse($floor->rooms as $room)
-                        <div class="relative group p-4 border rounded-lg text-center bg-gray-50 hover:bg-gray-100 transition-colors">
+                        <div class="relative group p-4 border rounded-lg text-center bg-gray-50 hover:bg-gray-100 transition-colors cursor-move room-item" data-id="{{ $room->id }}">
                             <span class="block text-lg font-bold text-gray-800">{{ $room->room_number }}</span>
-                            <span class="text-xs text-gray-500 uppercase">{{ $room->status }}</span>
+                            <span class="text-xs text-gray-500 uppercase">{{ $room->status_label }}</span>
                             
                             <!-- Botón eliminar flotante -->
                             <form action="{{ route('rooms.destroy', $room->id) }}" method="POST" class="absolute -top-2 -right-2 hidden group-hover:block" onsubmit="return confirm('¿Eliminar habitación?')">
@@ -63,7 +69,7 @@
                             </form>
                         </div>
                         @empty
-                        <p class="col-span-full text-sm text-gray-500 text-center py-4">No hay habitaciones en este piso.</p>
+                        <p class="col-span-full text-sm text-gray-500 text-center py-4 empty-message">No hay habitaciones en este piso.</p>
                         @endforelse
                     </div>
                 </div>
@@ -73,7 +79,80 @@
                 <p class="text-gray-500">Debes crear al menos un piso antes de añadir habitaciones.</p>
             </div>
             @endforelse
+            
+            <div x-show="isSaving" class="fixed bottom-8 right-8 bg-blue-600 text-white px-6 py-3 rounded-full shadow-lg flex items-center space-x-2" style="display: none;">
+                <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                <span>Guardando cambios...</span>
+            </div>
         </div>
     </div>
 </div>
 @endsection
+
+@push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+<script>
+function roomManagement() {
+    return {
+        isSaving: false,
+        message: { text: '', type: '' },
+        
+        init() {
+            const containers = document.querySelectorAll('.sortable-container');
+            containers.forEach(container => {
+                new Sortable(container, {
+                    group: 'rooms',
+                    animation: 150,
+                    ghostClass: 'opacity-50',
+                    onEnd: (evt) => {
+                        this.saveOrder();
+                    }
+                });
+            });
+        },
+
+        async saveOrder() {
+            this.isSaving = true;
+            const rooms = [];
+            
+            document.querySelectorAll('.sortable-container').forEach(container => {
+                const floorId = container.dataset.floorId;
+                const items = container.querySelectorAll('.room-item');
+                
+                items.forEach((item, index) => {
+                    rooms.push({
+                        id: item.dataset.id,
+                        floor_id: floorId,
+                        position: index
+                    });
+                });
+            });
+
+            try {
+                const response = await fetch('{{ route("rooms.reorder") }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({ rooms })
+                });
+
+                if (response.ok) {
+                    this.message = { text: 'Orden actualizado correctamente.', type: 'success' };
+                } else {
+                    this.message = { text: 'Error al actualizar el orden.', type: 'error' };
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                this.message = { text: 'Error de red al actualizar.', type: 'error' };
+            } finally {
+                this.isSaving = false;
+                setTimeout(() => this.message.text = '', 3000);
+            }
+        }
+    }
+}
+</script>
+@endpush

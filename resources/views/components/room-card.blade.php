@@ -63,13 +63,7 @@
     @else
         <!-- Available/Cleaning/Expired Status -->
         <div class="status-label text-xs text-center text-gray-600 font-medium">
-            @if($room->status === 'cleaning')
-                En Limpieza
-            @elseif($room->status === 'expired')
-                Tiempo Vencido
-            @else
-                Disponible
-            @endif
+            {{ $room->status_label }}
         </div>
     @endif
 </div>

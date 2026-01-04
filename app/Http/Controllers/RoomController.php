@@ -11,11 +11,39 @@ class RoomController extends Controller
     public function index()
     {
         $floors = Floor::where('tenant_id', auth()->user()->tenant_id)
-            ->with('rooms')
+            ->with(['rooms' => function ($query) {
+                $query->orderBy('position');
+            }])
             ->orderBy('floor_number')
             ->get();
             
         return view('rooms.index', compact('floors'));
+    }
+
+    public function reorder(Request $request)
+    {
+        $request->validate([
+            'rooms' => 'required|array',
+            'rooms.*.id' => 'required|exists:rooms,id',
+            'rooms.*.floor_id' => 'required|exists:floors,id',
+            'rooms.*.position' => 'required|integer',
+        ]);
+
+        foreach ($request->rooms as $roomData) {
+            $room = Room::findOrFail($roomData['id']);
+            
+            // Security check: ensure the room belongs to a floor of the current tenant
+            if ($room->floor->tenant_id !== auth()->user()->tenant_id) {
+                continue;
+            }
+
+            $room->update([
+                'floor_id' => $roomData['floor_id'],
+                'position' => $roomData['position']
+            ]);
+        }
+
+        return response()->json(['success' => true]);
     }
 
     public function store(Request $request)

@@ -31,6 +31,7 @@ Route::middleware(['auth', 'tenant'])->group(function () {
     
     Route::resource('floors', App\Http\Controllers\FloorController::class);
     Route::resource('rooms', App\Http\Controllers\RoomController::class);
+    Route::post('/rooms/reorder', [App\Http\Controllers\RoomController::class, 'reorder'])->name('rooms.reorder');
     
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 });

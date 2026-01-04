@@ -266,8 +266,9 @@ function dashboardApp() {
                         // Update label if not occupied
                         const statusLabel = roomElement.querySelector('.status-label');
                         if (statusLabel) {
-                            if (room.status === 'cleaning') statusLabel.textContent = 'En Limpieza';
-                            else if (room.status === 'expired') statusLabel.textContent = 'Tiempo Vencido';
+                            if (room.status === 'cleaning') statusLabel.textContent = 'Limpieza';
+                            else if (room.status === 'expired') statusLabel.textContent = 'Ocupado (Vencido)';
+                            else if (room.status === 'occupied') statusLabel.textContent = 'Ocupado';
                             else statusLabel.textContent = 'Disponible';
                         }
 
