@@ -80,6 +80,37 @@ class RoomController extends Controller
         return redirect()->route('rooms.index')->with('success', 'Habitación creada correctamente.');
     }
 
+    public function update(Request $request, Room $room)
+    {
+        // Security check through floor
+        if ($room->floor->tenant_id !== auth()->user()->tenant_id) {
+            abort(403);
+        }
+
+        $request->validate([
+            'room_number' => 'required|integer',
+            'type' => 'required|in:Solo,Doble,Triple,Matrimonial,Familiar',
+        ]);
+
+        // Check uniqueness if room number changed
+        if ($request->room_number != $room->room_number) {
+            $exists = Room::where('floor_id', $room->floor->id)
+                ->where('room_number', $request->room_number)
+                ->exists();
+
+            if ($exists) {
+                return back()->with('error', 'El número de habitación ya existe en este piso.');
+            }
+        }
+
+        $room->update([
+            'room_number' => $request->room_number,
+            'type' => $request->type
+        ]);
+
+        return back()->with('success', 'Habitación actualizada correctamente.');
+    }
+
     public function destroy(Room $room)
     {
         // Security check through floor

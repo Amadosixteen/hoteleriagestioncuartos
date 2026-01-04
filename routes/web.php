@@ -32,6 +32,7 @@ Route::middleware(['auth', 'tenant'])->group(function () {
     Route::resource('floors', App\Http\Controllers\FloorController::class);
     Route::resource('rooms', App\Http\Controllers\RoomController::class);
     Route::post('/rooms/reorder', [App\Http\Controllers\RoomController::class, 'reorder'])->name('rooms.reorder');
+    Route::put('/rooms/{room}', [App\Http\Controllers\RoomController::class, 'update'])->name('rooms.update');
 
     Route::get('/analytics', [App\Http\Controllers\AnalyticsController::class, 'index'])->name('analytics.index');
     Route::get('/calendar', [App\Http\Controllers\CalendarController::class, 'index'])->name('calendar.index');

@@ -70,6 +70,11 @@
                             <span class="block text-[10px] font-semibold text-blue-600 uppercase mb-1">{{ $room->type }}</span>
                             <span class="text-xs text-gray-500 uppercase">{{ $room->status_label }}</span>
                             
+                            <!-- Botón editar flotante -->
+                            <button @click.stop="openEditModal({{ $room->id }}, {{ $room->room_number }}, '{{ $room->type }}')" class="absolute -top-2 -left-2 hidden group-hover:block bg-blue-500 text-white rounded-full p-1 hover:bg-blue-600 shadow-sm z-10">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                            </button>
+
                             <!-- Botón eliminar flotante -->
                             <form action="{{ route('rooms.destroy', $room->id) }}" method="POST" class="absolute -top-2 -right-2 hidden group-hover:block" onsubmit="return confirm('¿Eliminar habitación?')">
                                 @csrf
@@ -97,6 +102,37 @@
             </div>
         </div>
     </div>
+
+    <!-- Modal Editar Habitación -->
+    <div x-show="showEditModal" x-cloak class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
+            <h3 class="text-lg font-bold mb-4">Editar Habitación</h3>
+            <form :action="'/rooms/' + editRoom.id" method="POST">
+                @csrf
+                @method('PUT')
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Número de Habitación</label>
+                        <input type="number" name="room_number" x-model="editRoom.room_number" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Tipo de Habitación</label>
+                        <select name="type" x-model="editRoom.type" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                            <option value="Solo">Solo</option>
+                            <option value="Doble">Doble</option>
+                            <option value="Triple">Triple</option>
+                            <option value="Matrimonial">Matrimonial</option>
+                            <option value="Familiar">Familiar</option>
+                        </select>
+                    </div>
+                    <div class="flex justify-end gap-3 pt-2">
+                        <button type="button" @click="showEditModal = false" class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200">Cancelar</button>
+                        <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Guardar Cambios</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
 </div>
 @endsection
 
@@ -107,6 +143,8 @@ function roomManagement() {
     return {
         isSaving: false,
         message: { text: '', type: '' },
+        showEditModal: false,
+        editRoom: { id: null, room_number: '', type: '' },
         
         init() {
             const containers = document.querySelectorAll('.sortable-container');
@@ -162,8 +200,17 @@ function roomManagement() {
                 this.isSaving = false;
                 setTimeout(() => this.message.text = '', 3000);
             }
+        },
+
+        openEditModal(id, number, type) {
+            this.editRoom = { id, room_number: number, type };
+            this.showEditModal = true;
         }
     }
 }
 </script>
+
+<style>
+    [x-cloak] { display: none !important; }
+</style>
 @endpush
