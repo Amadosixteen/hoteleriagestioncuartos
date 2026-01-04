@@ -66,8 +66,8 @@
                             <div class="text-xs text-gray-500">{{ $primary ? $primary->document_number : '' }}</div>
                         </td>
                         <td class="px-4 py-4 whitespace-nowrap">
-                            <div class="text-xs text-gray-600 font-medium">In: {{ $res->check_in_at->format('H:i') }}</div>
-                            <div class="text-xs text-gray-400">Out: {{ $res->check_out_at->format('H:i') }}</div>
+                            <div class="text-xs text-gray-600 font-medium">Entrada: {{ $res->check_in_at->format('H:i') }}</div>
+                            <div class="text-xs text-gray-400">Salida: {{ $res->check_out_at->format('H:i') }}</div>
                         </td>
                         <td class="px-4 py-4">
                             @if($others->count() > 0)
