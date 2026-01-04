@@ -20,11 +20,18 @@
     </div>
 
     @php
-        $formattedDate = \Carbon\Carbon::parse($date)->translatedFormat('d \d\e F, Y');
+        $carbonDate = \Carbon\Carbon::parse($date);
+        $meses = [
+            'January' => 'Enero', 'February' => 'Febrero', 'March' => 'Marzo', 'April' => 'Abril',
+            'May' => 'Mayo', 'June' => 'Junio', 'July' => 'Julio', 'August' => 'Agosto',
+            'September' => 'Septiembre', 'October' => 'Octubre', 'November' => 'Noviembre', 'December' => 'Diciembre'
+        ];
+        $mesEspañol = $meses[$carbonDate->format('F')];
+        $formattedDate = $carbonDate->format('d') . ' de ' . $mesEspañol . ', ' . $carbonDate->format('Y');
     @endphp
 
     <div class="bg-white shadow-sm border border-gray-200 rounded-lg overflow-hidden">
-        <div class="px-6 py-4 bg-gray-50 border-b border-gray-200 flex justify-between items-center">
+        <div class="px-6 py-4 bg-gray-50 border-b border-gray-200 flex flex-col sm:flex-row justify-between items-start sm:items-center space-y-2 sm:space-y-0">
             <h3 class="text-lg font-medium text-gray-900">
                 Ocupación el {{ $formattedDate }}
             </h3>
@@ -37,11 +44,10 @@
             <table class="min-w-full divide-y divide-gray-200">
                 <thead class="bg-gray-50">
                     <tr>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Piso / Cuarto</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Huésped Principal</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Check-in</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Check-out</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Otros Huéspedes</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Piso / Hab</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Huésped Principal</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Entrada / Salida</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Acompañantes</th>
                     </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-200">
@@ -51,31 +57,29 @@
                         $others = $res->guests->where('is_primary', false);
                     @endphp
                     <tr class="hover:bg-gray-50 transition-colors">
-                        <td class="px-6 py-4 whitespace-nowrap">
+                        <td class="px-4 py-4 whitespace-nowrap">
                             <div class="text-sm font-bold text-gray-900">{{ $res->room->room_number }}</div>
-                            <div class="text-xs text-gray-500">{{ $res->room->floor->name }}</div>
+                            <div class="text-[10px] text-gray-500 uppercase">{{ $res->room->floor->name }}</div>
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="text-sm font-medium text-gray-900">{{ $primary ? $primary->full_name : 'N/A' }}</div>
+                        <td class="px-4 py-4">
+                            <div class="text-sm font-medium text-gray-900 truncate max-w-[120px] sm:max-w-none">{{ $primary ? $primary->full_name : 'N/A' }}</div>
                             <div class="text-xs text-gray-500">{{ $primary ? $primary->document_number : '' }}</div>
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                            {{ $res->check_in_at->format('H:i') }}
+                        <td class="px-4 py-4 whitespace-nowrap">
+                            <div class="text-xs text-gray-600 font-medium">In: {{ $res->check_in_at->format('H:i') }}</div>
+                            <div class="text-xs text-gray-400">Out: {{ $res->check_out_at->format('H:i') }}</div>
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                            {{ $res->check_out_at->format('H:i') }}
-                        </td>
-                        <td class="px-6 py-4">
+                        <td class="px-4 py-4">
                             @if($others->count() > 0)
-                            <div class="flex -space-x-1 overflow-hidden">
+                            <div class="flex flex-wrap gap-1">
                                 @foreach($others as $other)
-                                <div class="inline-block h-6 w-6 rounded-full bg-blue-200 ring-2 ring-white flex items-center justify-center text-[8px] font-bold text-blue-700 uppercase" title="{{ $other->full_name }}">
+                                <div class="inline-flex h-6 w-6 rounded-full bg-blue-600 items-center justify-center text-[8px] font-bold text-white shrink-0 shadow-sm" title="{{ $other->full_name }}">
                                     {{ substr($other->first_name, 0, 1) }}{{ substr($other->last_name, 0, 1) }}
                                 </div>
                                 @endforeach
                             </div>
                             @else
-                            <span class="text-xs text-gray-400">Ninguno</span>
+                            <span class="text-xs text-gray-400">Solo</span>
                             @endif
                         </td>
                     </tr>
