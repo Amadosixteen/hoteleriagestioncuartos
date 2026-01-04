@@ -21,6 +21,8 @@
                         @if(auth()->user()->isAdmin())
                         <a href="{{ route('hotels.index') }}" class="text-sm font-medium text-gray-700 hover:text-gray-900">Gestionar Hoteles</a>
                         @endif
+                        <a href="{{ route('analytics.index') }}" class="text-sm font-medium text-gray-700 hover:text-gray-900">Analíticas</a>
+                        <a href="{{ route('calendar.index') }}" class="text-sm font-medium text-gray-700 hover:text-gray-900">Calendario</a>
                         <a href="{{ route('floors.index') }}" class="text-sm font-medium text-gray-700 hover:text-gray-900">Pisos</a>
                         <a href="{{ route('rooms.index') }}" class="text-sm font-medium text-gray-700 hover:text-gray-900">Habitaciones</a>
                     </div>
