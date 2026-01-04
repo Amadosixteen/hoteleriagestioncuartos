@@ -25,5 +25,12 @@ Route::middleware(['auth', 'tenant'])->group(function () {
     Route::get('/api/rooms/status', [ReservationController::class, 'getRoomStatus'])->name('api.rooms.status');
     Route::post('/rooms/{id}/toggle-cleaning', [ReservationController::class, 'toggleCleaning'])->name('rooms.toggle-cleaning');
     
+    // Management Routes
+    Route::get('/hotels', [App\Http\Controllers\HotelController::class, 'index'])->name('hotels.index');
+    Route::post('/hotels/{id}/switch', [App\Http\Controllers\HotelController::class, 'switch'])->name('hotels.switch');
+    
+    Route::resource('floors', App\Http\Controllers\FloorController::class);
+    Route::resource('rooms', App\Http\Controllers\RoomController::class);
+    
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 });

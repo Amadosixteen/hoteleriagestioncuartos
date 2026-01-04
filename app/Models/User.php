@@ -24,6 +24,7 @@ class User extends Authenticatable
         'tenant_id',
         'google_id',
         'is_active',
+        'is_admin',
     ];
 
     /**
@@ -55,5 +56,13 @@ class User extends Authenticatable
     public function tenant()
     {
         return $this->belongsTo(Tenant::class);
+    }
+
+    /**
+     * Check if the user is a super admin.
+     */
+    public function isAdmin(): bool
+    {
+        return (bool) $this->is_admin;
     }
 }
