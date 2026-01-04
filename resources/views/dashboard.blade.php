@@ -4,7 +4,25 @@
 
 @section('content')
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8" x-data="dashboardApp()">
-    <h2 class="text-2xl font-bold text-gray-900 mb-6">Gestión de Cuartos</h2>
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-6 gap-4">
+        <h2 class="text-2xl font-bold text-gray-900">Gestión de Cuartos</h2>
+        
+        <!-- Filtros de Tipo -->
+        <div class="flex flex-wrap gap-2 bg-white p-1 rounded-xl border border-gray-100 shadow-sm h-fit">
+            <button @click="filterType = 'all'" 
+                :class="filterType === 'all' ? 'bg-blue-600 text-white shadow-md' : 'text-gray-500 hover:bg-gray-50'"
+                class="px-4 py-1.5 rounded-lg text-xs font-bold transition-all uppercase tracking-wider">
+                Todos
+            </button>
+            <template x-for="type in ['Solo', 'Doble', 'Triple', 'Matrimonial', 'Familiar']">
+                <button @click="filterType = type" 
+                    :class="filterType === type ? 'bg-blue-600 text-white shadow-md' : 'text-gray-500 hover:bg-gray-50'"
+                    class="px-4 py-1.5 rounded-lg text-xs font-bold transition-all uppercase tracking-wider"
+                    x-text="type">
+                </button>
+            </template>
+        </div>
+    </div>
 
     @foreach($floors as $floor)
     <div class="mb-8">
@@ -13,7 +31,9 @@
         <!-- Grid de cuartos (10 columnas) -->
         <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-10 gap-3">
             @foreach($floor->rooms as $room)
-                <x-room-card :room="$room" />
+                <div x-show="filterType === 'all' || filterType === '{{ $room->type }}'" x-transition>
+                    <x-room-card :room="$room" />
+                </div>
             @endforeach
         </div>
     </div>
@@ -50,6 +70,8 @@ function dashboardApp() {
     return {
         showModal: false,
         selectedRoom: null,
+        selectedRoomType: '',
+        filterType: 'all',
         reservation: null,
         guests: [{ 
             document_type: 'dni', 
@@ -75,6 +97,7 @@ function dashboardApp() {
 
             // Listen for room click events
             window.addEventListener('open-reservation-modal', (event) => {
+                this.selectedRoomType = event.detail.roomType;
                 this.openModal(event.detail.roomId, event.detail.hasReservation, event.detail.status);
             });
         },

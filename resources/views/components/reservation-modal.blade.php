@@ -12,8 +12,9 @@
     >
         <!-- Modal Header -->
         <div class="flex items-center justify-between p-6 border-b border-gray-200">
-            <h3 class="text-xl font-semibold text-gray-900">
+            <h3 class="text-xl font-semibold text-gray-900 flex items-center gap-2">
                 <span x-text="isEditing ? 'Editar Reserva' : 'Nueva Reserva'"></span>
+                <span class="text-xs px-2 py-0.5 bg-blue-100 text-blue-700 rounded-full" x-show="selectedRoomType" x-text="selectedRoomType"></span>
             </h3>
             <button @click="closeModal()" class="text-gray-400 hover:text-gray-600">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">

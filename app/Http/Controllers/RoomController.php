@@ -51,6 +51,7 @@ class RoomController extends Controller
         $request->validate([
             'floor_id' => 'required|exists:floors,id',
             'room_number' => 'required|integer',
+            'type' => 'required|in:Solo,Doble,Triple,Matrimonial,Familiar',
         ]);
 
         $floor = Floor::findOrFail($request->floor_id);
@@ -72,6 +73,7 @@ class RoomController extends Controller
         Room::create([
             'floor_id' => $floor->id,
             'room_number' => $request->room_number,
+            'type' => $request->type,
             'status' => 'available',
         ]);
 

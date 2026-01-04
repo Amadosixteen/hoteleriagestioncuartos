@@ -36,6 +36,16 @@
                         <input type="number" name="room_number" id="room_number" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" placeholder="Ej. 101">
                     </div>
                     <div>
+                        <label for="type" class="block text-sm font-medium text-gray-700">Tipo de Habitación</label>
+                        <select name="type" id="type" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                            <option value="Solo">Solo</option>
+                            <option value="Doble">Doble</option>
+                            <option value="Triple">Triple</option>
+                            <option value="Matrimonial">Matrimonial</option>
+                            <option value="Familiar">Familiar</option>
+                        </select>
+                    </div>
+                    <div>
                         <button type="submit" class="w-full inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
                             Crear Habitación
                         </button>
@@ -57,6 +67,7 @@
                         @forelse($floor->rooms as $room)
                         <div class="relative group p-4 border rounded-lg text-center bg-gray-50 hover:bg-gray-100 transition-colors cursor-move room-item" data-id="{{ $room->id }}">
                             <span class="block text-lg font-bold text-gray-800">{{ $room->room_number }}</span>
+                            <span class="block text-[10px] font-semibold text-blue-600 uppercase mb-1">{{ $room->type }}</span>
                             <span class="text-xs text-gray-500 uppercase">{{ $room->status_label }}</span>
                             
                             <!-- Botón eliminar flotante -->

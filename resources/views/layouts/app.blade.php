@@ -78,7 +78,7 @@
                                     <div class="w-full pt-2 border-t border-blue-200">
                                         <p class="text-[10px] text-blue-700 text-center leading-tight">
                                             Importante: En la nota de Yape escribe<br>
-                                            <span class="font-bold uppercase">"Pago Hotel: {{ auth()->user()->tenant->name }}"</span>
+                                            <span class="font-bold uppercase">"PAGO: {{ strtoupper(trim(str_replace(["'s", "'S", "Hotel", "HOTEL"], "", auth()->user()->tenant->name))) }}"</span>
                                         </p>
                                     </div>
                                 </div>
@@ -145,7 +145,7 @@
                             <div class="bg-blue-50 p-2 rounded border border-blue-100">
                                 <p class="text-[10px] text-blue-800 text-center">
                                     Importante: En la nota de Yape escribe:<br>
-                                    <span class="font-bold uppercase">"Pago Hotel: {{ auth()->user()->tenant->name }}"</span>
+                                    <span class="font-bold uppercase">"PAGO: {{ strtoupper(trim(str_replace(["'s", "'S", "Hotel", "HOTEL"], "", auth()->user()->tenant->name))) }}"</span>
                                 </p>
                             </div>
                         </div>

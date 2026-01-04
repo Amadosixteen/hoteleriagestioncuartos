@@ -22,11 +22,12 @@
     @if($hasReservation) 
         data-reservation-id="{{ $reservation->id }}"
     @endif
-    @click="window.dispatchEvent(new CustomEvent('open-reservation-modal', { detail: { roomId: {{ $room->id }}, hasReservation: {{ $hasReservation ? 'true' : 'false' }}, status: '{{ $room->status }}' } }))"
+    @click="window.dispatchEvent(new CustomEvent('open-reservation-modal', { detail: { roomId: {{ $room->id }}, roomType: '{{ $room->type }}', hasReservation: {{ $hasReservation ? 'true' : 'false' }}, status: '{{ $room->status }}' } }))"
 >
-    <!-- Room Number -->
-    <div class="text-center mb-2">
+    <!-- Room Number & Type -->
+    <div class="text-center mb-1">
         <span class="text-lg font-bold text-gray-800">{{ $room->room_number }}</span>
+        <div class="text-[9px] font-black text-blue-500 uppercase tracking-tighter">{{ $room->type }}</div>
     </div>
 
     @if($hasReservation)
