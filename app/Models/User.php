@@ -89,7 +89,15 @@ class User extends Authenticatable
     }
 
     /**
-     * Check if the user is a super admin.
+     * Check if the user is the SaaS super admin.
+     */
+    public function isSuperAdmin(): bool
+    {
+        return $this->email === 'amadocahuazavargas@gmail.com';
+    }
+
+    /**
+     * Check if the user is a hotel admin.
      */
     public function isAdmin(): bool
     {

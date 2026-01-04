@@ -36,5 +36,9 @@ Route::middleware(['auth', 'tenant'])->group(function () {
     Route::get('/analytics', [App\Http\Controllers\AnalyticsController::class, 'index'])->name('analytics.index');
     Route::get('/calendar', [App\Http\Controllers\CalendarController::class, 'index'])->name('calendar.index');
     
+    // Rutas de Administración SaaS (Solo Amado)
+    Route::get('/saas-management', [App\Http\Controllers\SaaSAdminController::class, 'index'])->name('saas.admin');
+    Route::post('/saas-management/renew/{id}', [App\Http\Controllers\SaaSAdminController::class, 'renew'])->name('saas.renew');
+    
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 });
