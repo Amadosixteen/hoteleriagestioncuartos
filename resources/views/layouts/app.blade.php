@@ -40,18 +40,38 @@
                 </div>
 
                 <!-- Usuario y Logout (Desktop) -->
-                <div class="hidden sm:flex items-center space-x-6">
-                    <!-- Suscripción Desktop -->
-                    <div class="flex flex-col items-end space-y-1">
-                        <div class="flex items-center space-x-2">
-                            <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Mi Suscripción</span>
-                            <span class="text-xs font-bold {{ auth()->user()->days_remaining <= 5 ? 'text-red-600' : 'text-green-600' }}">
-                                {{ auth()->user()->days_remaining }} días
-                            </span>
-                        </div>
-                        <div class="w-32 h-1.5 bg-gray-200 rounded-full overflow-hidden">
-                            <div class="h-full {{ auth()->user()->days_remaining <= 5 ? 'bg-red-500' : 'bg-green-500' }}" 
-                                 style="width: {{ auth()->user()->subscription_progress }}%"></div>
+                <div class="hidden sm:flex items-center space-x-6" x-data="{ showYape: false }">
+                    <!-- Suscripción Desktop (Interactiva) -->
+                    <div class="relative">
+                        <button @click="showYape = !showYape" class="flex flex-col items-end space-y-1 hover:opacity-80 transition-opacity focus:outline-none">
+                            <div class="flex items-center space-x-2">
+                                <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Mi Suscripción</span>
+                                <span class="text-xs font-bold {{ auth()->user()->days_remaining <= 5 ? 'text-red-600' : 'text-green-600' }}">
+                                    {{ auth()->user()->days_remaining }} días
+                                </span>
+                            </div>
+                            <div class="w-32 h-1.5 bg-gray-200 rounded-full overflow-hidden">
+                                <div class="h-full {{ auth()->user()->days_remaining <= 5 ? 'bg-red-500' : 'bg-green-500' }}" 
+                                     style="width: {{ auth()->user()->subscription_progress }}%"></div>
+                            </div>
+                        </button>
+
+                        <!-- Popover de Yape Desktop -->
+                        <div x-show="showYape" 
+                             @click.away="showYape = false"
+                             x-transition:enter="transition ease-out duration-200"
+                             x-transition:enter-start="opacity-0 translate-y-1"
+                             x-transition:enter-end="opacity-100 translate-y-0"
+                             class="absolute right-0 mt-2 w-64 bg-white border border-gray-200 rounded-xl shadow-xl z-50 p-4">
+                            <div class="flex flex-col items-center">
+                                <span class="text-sm font-bold text-gray-800 mb-3 text-center">Renovar mi Suscripción</span>
+                                <div class="w-full p-3 bg-blue-50 rounded-lg flex flex-col items-center">
+                                    <p class="text-xs text-blue-600 font-medium mb-1">Yapear al número:</p>
+                                    <p class="text-xl font-black text-blue-800 mb-2">905 562 625</p>
+                                    <p class="text-[10px] text-blue-400 text-center uppercase tracking-tighter">Costo: S/ 35.90 por mes</p>
+                                </div>
+                                <p class="text-[10px] text-gray-400 mt-4 text-center">La renovación se procesará tras verificar el pago.</p>
+                            </div>
                         </div>
                     </div>
 

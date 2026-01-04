@@ -66,7 +66,8 @@ class User extends Authenticatable
         
         if ($now->greaterThan($expires)) return 0;
         
-        return $now->diffInDays($expires);
+        // Usar diffInHours y redondear hacia arriba para evitar decimales extraños
+        return (int) ceil($now->diffInHours($expires) / 24);
     }
 
     /**
