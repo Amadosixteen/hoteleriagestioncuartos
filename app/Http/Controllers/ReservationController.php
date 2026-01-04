@@ -194,6 +194,7 @@ class ReservationController extends Controller
             ->whereHas('floor', function ($query) {
                 $query->where('tenant_id', auth()->user()->tenant_id);
             })
+            ->orderBy('position')
             ->get();
 
         $roomsData = $rooms->map(function ($room) {
