@@ -52,28 +52,30 @@
             <div class="px-6 py-4 border-b border-gray-200 bg-gray-50">
                 <h3 class="text-lg font-medium text-gray-900">Mejores Clientes Frecuentes</h3>
             </div>
-            <table class="min-w-full divide-y divide-gray-200">
-                <thead class="bg-gray-50">
-                    <tr>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Huésped</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">DNI</th>
-                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Visitas</th>
-                    </tr>
-                </thead>
-                <tbody class="bg-white divide-y divide-gray-200">
-                    @forelse($frequentGuests as $guest)
-                    <tr>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ $guest->full_name }}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $guest->document_number }}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-right text-blue-600 font-bold">{{ $guest->count }}</td>
-                    </tr>
-                    @empty
-                    <tr>
-                        <td colspan="3" class="px-6 py-4 text-center text-sm text-gray-500">No hay datos suficientes</td>
-                    </tr>
-                    @endforelse
-                </tbody>
-            </table>
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Huésped</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">DNI</th>
+                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Visitas</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        @forelse($frequentGuests as $guest)
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ $guest->full_name }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $guest->document_number }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-right text-blue-600 font-bold">{{ $guest->count }}</td>
+                        </tr>
+                        @empty
+                        <tr>
+                            <td colspan="3" class="px-6 py-4 text-center text-sm text-gray-500">No hay datos suficientes</td>
+                        </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
         </div>
 
         <!-- Ocupación por Cuarto (Top 10 más usados) -->

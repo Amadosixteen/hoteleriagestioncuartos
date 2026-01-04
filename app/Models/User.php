@@ -25,6 +25,7 @@ class User extends Authenticatable
         'google_id',
         'is_active',
         'is_admin',
+        'subscription_expires_at',
     ];
 
     /**
@@ -47,7 +48,35 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'subscription_expires_at' => 'datetime',
+            'is_active' => 'boolean',
+            'is_admin' => 'boolean',
         ];
+    }
+
+    /**
+     * Get days remaining in subscription.
+     */
+    public function getDaysRemainingAttribute()
+    {
+        if (!$this->subscription_expires_at) return 0;
+        
+        $now = \Carbon\Carbon::now();
+        $expires = \Carbon\Carbon::parse($this->subscription_expires_at);
+        
+        if ($now->greaterThan($expires)) return 0;
+        
+        return $now->diffInDays($expires);
+    }
+
+    /**
+     * Get subscription progress percentage (assuming 30 days cycle).
+     */
+    public function getSubscriptionProgressAttribute()
+    {
+        $days = $this->days_remaining;
+        $percentage = ($days / 30) * 100;
+        return min(100, max(0, $percentage));
     }
 
     /**
