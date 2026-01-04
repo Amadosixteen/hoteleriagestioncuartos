@@ -40,14 +40,30 @@
                 </div>
 
                 <!-- Usuario y Logout (Desktop) -->
-                <div class="hidden sm:flex items-center space-x-4">
-                    <span class="text-sm text-gray-700">{{ auth()->user()->name }}</span>
-                    <form action="{{ route('logout') }}" method="POST" class="inline">
-                        @csrf
-                        <button type="submit" class="text-sm text-gray-600 hover:text-gray-900">
-                            Cerrar sesión
-                        </button>
-                    </form>
+                <div class="hidden sm:flex items-center space-x-6">
+                    <!-- Suscripción Desktop -->
+                    <div class="flex flex-col items-end space-y-1">
+                        <div class="flex items-center space-x-2">
+                            <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Mi Suscripción</span>
+                            <span class="text-xs font-bold {{ auth()->user()->days_remaining <= 5 ? 'text-red-600' : 'text-green-600' }}">
+                                {{ auth()->user()->days_remaining }} días
+                            </span>
+                        </div>
+                        <div class="w-32 h-1.5 bg-gray-200 rounded-full overflow-hidden">
+                            <div class="h-full {{ auth()->user()->days_remaining <= 5 ? 'bg-red-500' : 'bg-green-500' }}" 
+                                 style="width: {{ auth()->user()->subscription_progress }}%"></div>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center space-x-4 border-l pl-6 border-gray-200">
+                        <span class="text-sm font-medium text-gray-700">{{ auth()->user()->name }}</span>
+                        <form action="{{ route('logout') }}" method="POST" class="inline">
+                            @csrf
+                            <button type="submit" class="text-sm text-gray-500 hover:text-red-600 transition-colors">
+                                Cerrar sesión
+                            </button>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
@@ -64,8 +80,34 @@
                 <a href="{{ route('floors.index') }}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-50">Pisos</a>
                 <a href="{{ route('rooms.index') }}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-50">Habitaciones</a>
                 
-                <div class="pt-4 pb-1 border-t border-gray-200">
-                    <div class="px-3 text-xs font-semibold text-gray-500 uppercase">{{ auth()->user()->name }}</div>
+                <div class="pt-4 pb-1 border-t border-gray-200" x-data="{ showYape: false }">
+                    <div class="px-3 text-xs font-semibold text-gray-500 uppercase mb-2">{{ auth()->user()->name }}</div>
+                    
+                    <!-- Mi Suscripción Móvil -->
+                    <div class="px-3 py-3 bg-gray-50 rounded-lg mx-2 mb-3">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="text-sm font-bold text-gray-700">Mi Suscripción</span>
+                            <span class="text-xs font-bold {{ auth()->user()->days_remaining <= 5 ? 'text-red-600' : 'text-green-600' }}">
+                                {{ auth()->user()->days_remaining }} días restantes
+                            </span>
+                        </div>
+                        <div class="w-full h-2 bg-gray-200 rounded-full overflow-hidden mb-3">
+                            <div class="h-full {{ auth()->user()->days_remaining <= 5 ? 'bg-red-500' : 'bg-green-500' }}" 
+                                 style="width: {{ auth()->user()->subscription_progress }}%"></div>
+                        </div>
+                        <button @click="showYape = !showYape" class="w-full py-2 bg-blue-600 text-white text-sm font-bold rounded-md hover:bg-blue-700 transition-colors flex items-center justify-center space-x-2">
+                            <span>Renovar con Yape</span>
+                            <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+                        </button>
+
+                        <!-- Info de Yape -->
+                        <div x-show="showYape" class="mt-4 p-3 bg-white border border-blue-100 rounded-md shadow-inner" x-transition>
+                            <p class="text-xs text-center text-gray-600 mb-2">Escanea el QR o yapea al número:</p>
+                            <p class="text-lg font-black text-blue-800 text-center mb-2">905 562 625</p>
+                            <p class="text-[10px] text-center text-gray-400">Costo: S/ 35.90 por mes</p>
+                        </div>
+                    </div>
+
                     <form action="{{ route('logout') }}" method="POST" class="block w-full">
                         @csrf
                         <button type="submit" class="w-full text-left px-3 py-2 text-base font-medium text-red-600 hover:bg-gray-50">
