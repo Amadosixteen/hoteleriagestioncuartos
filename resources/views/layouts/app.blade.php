@@ -72,8 +72,15 @@
                                 <span class="text-sm font-bold text-gray-800 mb-3 text-center">Renovar mi Suscripción</span>
                                 <div class="w-full p-3 bg-blue-50 rounded-lg flex flex-col items-center">
                                     <p class="text-xs text-blue-600 font-medium mb-1">Yapear al número:</p>
-                                    <p class="text-xl font-black text-blue-800 mb-2">905 562 625</p>
-                                    <p class="text-[10px] text-blue-400 text-center uppercase tracking-tighter">Costo: S/ 35.90 por mes</p>
+                                    <p class="text-xl font-black text-blue-800 mb-1">905 562 625</p>
+                                    <p class="text-[10px] text-blue-400 text-center uppercase tracking-tighter mb-2">Costo: S/ 35.90 por mes</p>
+                                    
+                                    <div class="w-full pt-2 border-t border-blue-200">
+                                        <p class="text-[10px] text-blue-700 text-center leading-tight">
+                                            Importante: En la nota de Yape escribe<br>
+                                            <span class="font-bold uppercase">"Pago Hotel: {{ auth()->user()->tenant->name }}"</span>
+                                        </p>
+                                    </div>
                                 </div>
                                 <p class="text-[10px] text-gray-400 mt-4 text-center">La renovación se procesará tras verificar el pago.</p>
                             </div>
@@ -132,8 +139,15 @@
                         <!-- Info de Yape -->
                         <div x-show="showYape" class="mt-4 p-3 bg-white border border-blue-100 rounded-md shadow-inner" x-transition>
                             <p class="text-xs text-center text-gray-600 mb-2">Escanea el QR o yapea al número:</p>
-                            <p class="text-lg font-black text-blue-800 text-center mb-2">905 562 625</p>
-                            <p class="text-[10px] text-center text-gray-400">Costo: S/ 35.90 por mes</p>
+                            <p class="text-lg font-black text-blue-800 text-center mb-1">905 562 625</p>
+                            <p class="text-[10px] text-center text-gray-400 mb-3">Costo: S/ 35.90 por mes</p>
+                            
+                            <div class="bg-blue-50 p-2 rounded border border-blue-100">
+                                <p class="text-[10px] text-blue-800 text-center">
+                                    Importante: En la nota de Yape escribe:<br>
+                                    <span class="font-bold uppercase">"Pago Hotel: {{ auth()->user()->tenant->name }}"</span>
+                                </p>
+                            </div>
                         </div>
                     </div>
 
