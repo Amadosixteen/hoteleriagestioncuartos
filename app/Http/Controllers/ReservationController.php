@@ -174,7 +174,10 @@ class ReservationController extends Controller
         $this->authorize('update', $reservation);
 
         return DB::transaction(function () use ($reservation) {
-            $reservation->update(['status' => 'completed']);
+            $reservation->update([
+                'status' => 'completed',
+                'check_out_at' => \Carbon\Carbon::now()
+            ]);
             $reservation->room->update(['status' => 'available']);
 
             if (request()->wantsJson()) {
@@ -240,7 +243,10 @@ class ReservationController extends Controller
         if ($room->status === 'available' || $room->status === 'expired') {
             // Complete previous reservation if it exists (e.g. if expired)
             if ($room->activeReservation) {
-                $room->activeReservation->update(['status' => 'completed']);
+                $room->activeReservation->update([
+                    'status' => 'completed',
+                    'check_out_at' => \Carbon\Carbon::now()
+                ]);
             }
 
             $room->update(['status' => 'cleaning']);
