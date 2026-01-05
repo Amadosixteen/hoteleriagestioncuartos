@@ -38,8 +38,8 @@
                  class="absolute inset-0 w-full h-full object-cover">
             <div class="absolute inset-0 bg-gradient-to-r from-black/40 to-transparent"></div>
             <div class="absolute bottom-12 left-12 text-white animate-fade-in">
-                <h2 class="text-5xl font-bold mb-4 drop-shadow-md">Excelencia en cada reserva.</h2>
-                <p class="text-xl text-gray-100 max-w-md drop-shadow-sm">Gestiona tu hotel con la elegancia y eficiencia que tus huéspedes merecen.</p>
+                <h2 class="text-5xl font-bold mb-4 drop-shadow-md"> Gestión de Reservas Inteligente</h2>
+                <p class="text-xl text-gray-100 max-w-md drop-shadow-sm">Control Total, en tiempo real, en la Nube</p>
             </div>
         </div>
 
