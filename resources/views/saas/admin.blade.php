@@ -69,6 +69,11 @@
                                     <span class="px-2 py-1 text-[10px] font-bold rounded-full bg-red-100 text-red-700 uppercase">Baneado</span>
                                     @break
                             @endswitch
+                            <div class="mt-1">
+                                <span class="text-[9px] font-bold uppercase tracking-wider {{ $user->subscription_type === 'trial' ? 'text-gray-500 bg-gray-100 px-1.5 py-0.5 rounded' : 'text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded' }}">
+                                    {{ $user->subscription_type === 'trial' ? 'Prueba' : 'Mensual' }}
+                                </span>
+                            </div>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
                             <div class="text-sm {{ ($user->days_remaining <= 5 && $user->hasActiveSubscription()) ? 'text-red-600 font-bold' : ($user->status_label === 'Vencido' ? 'text-orange-600 font-medium' : 'text-gray-900') }}">

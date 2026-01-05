@@ -74,6 +74,7 @@ class SaaSAdminController extends Controller
             'is_active' => true,
             'is_admin' => true,
             'subscription_expires_at' => $expiresAt,
+            'subscription_type' => $request->subscription_type,
         ]);
 
         return back()->with('success', "Hotel y usuario creados exitosamente con suscripción de " . ($request->subscription_type === 'trial' ? '3 días' : '30 días') . ".");
@@ -117,6 +118,7 @@ class SaaSAdminController extends Controller
 
         $user->update([
             'subscription_expires_at' => $startDate->addDays(30),
+            'subscription_type' => 'monthly', // Pasamos a mensual (pagado) tras renovar
             'is_active' => true
         ]);
 

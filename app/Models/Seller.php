@@ -33,9 +33,6 @@ class Seller extends Model
     /**
      * Calculate active commissions (40% of 35.90 per active hotel).
      */
-    /**
-     * Calculate active commissions (40% of 35.90 per active hotel).
-     */
     public function getActiveCommissionsAttribute(): float
     {
         return $this->active_clients_count * 35.90 * 0.40;
@@ -53,7 +50,9 @@ class Seller extends Model
                 $users = $tenant->relationLoaded('users') ? $tenant->users : $tenant->users()->get();
                 
                 return $users->contains(function ($user) {
-                    return $user->hasActiveSubscription() && !$user->isSuperAdmin();
+                    return $user->hasActiveSubscription() 
+                        && !$user->isSuperAdmin()
+                        && $user->subscription_type !== 'trial'; // No comisionar pruebas
                 });
             })->count();
         }
@@ -62,6 +61,7 @@ class Seller extends Model
             ->whereHas('users', function ($query) {
                 $query->where('is_active', true)
                     ->where('email', '!=', 'amadocahuazavargas@gmail.com') // Exclude Super Admin
+                    ->where('subscription_type', '!=', 'trial') // Exclude Trials
                     ->whereNotNull('subscription_expires_at')
                     ->where('subscription_expires_at', '>', Carbon::now());
             })->count();

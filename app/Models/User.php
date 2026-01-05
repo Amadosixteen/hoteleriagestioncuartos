@@ -26,6 +26,7 @@ class User extends Authenticatable
         'is_active',
         'is_admin',
         'subscription_expires_at',
+        'subscription_type',
     ];
 
     /**
