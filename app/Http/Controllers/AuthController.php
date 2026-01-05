@@ -38,11 +38,11 @@ class AuthController extends Controller
                 ->first();
             
             if (!$user) {
-                return redirect()->route('login')->with('error', 'Su cuenta no está registrada en el sistema. Por favor, contacte con soporte al +51 905 562 625.');
+                return redirect()->route('login')->with('error', 'Su cuenta no está registrada en el sistema. Renueva con Yape al 905 562 625.');
             }
 
             if (!$user->is_active) {
-                return redirect()->route('login')->with('error', 'Su suscripción no está activa. Por favor, contacte con soporte al +51 905 562 625.');
+                return redirect()->route('login')->with('error', 'Su suscripción ha expirado. Renueva con Yape al 905 562 625 para seguir usando el sistema.');
             }
 
             // Actualizar google_id si es necesario
