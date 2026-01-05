@@ -9,6 +9,7 @@ class Tenant extends Model
 {
     protected $fillable = [
         'name',
+        'phone',
         'slug',
         'seller_id',
         'registration_date',

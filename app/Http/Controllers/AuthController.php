@@ -38,7 +38,9 @@ class AuthController extends Controller
                 ->first();
             
             if (!$user) {
-                return redirect()->route('login')->with('error', 'Su cuenta no está registrada en el sistema. Renueva con Yape al 905 562 625.');
+                return redirect()->route('login')
+                    ->with('error', 'Su cuenta no está registrada en el sistema.')
+                    ->with('unregistered', true);
             }
 
             if (!$user->is_active) {
