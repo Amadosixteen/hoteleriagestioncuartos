@@ -71,6 +71,32 @@ class User extends Authenticatable
     }
 
     /**
+     * Check if the user has an active subscription.
+     */
+    public function hasActiveSubscription(): bool
+    {
+        return $this->is_active && 
+               $this->subscription_expires_at && 
+               $this->subscription_expires_at->isFuture();
+    }
+
+    /**
+     * Get the status label for the user.
+     */
+    public function getStatusLabelAttribute(): string
+    {
+        if (!$this->is_active) {
+            return 'Baneado';
+        }
+
+        if (!$this->hasActiveSubscription()) {
+            return 'Vencido';
+        }
+
+        return 'Activo';
+    }
+
+    /**
      * Get subscription progress percentage (assuming 30 days cycle).
      */
     public function getSubscriptionProgressAttribute()

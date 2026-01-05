@@ -33,15 +33,12 @@ class Seller extends Model
     /**
      * Calculate active commissions (40% of 35.90 per active hotel).
      */
+    /**
+     * Calculate active commissions (40% of 35.90 per active hotel).
+     */
     public function getActiveCommissionsAttribute(): float
     {
-        $activeTenantsCount = $this->tenants()
-            ->whereHas('users', function ($query) {
-                $query->where('is_active', true)
-                    ->where('subscription_expires_at', '>', Carbon::now());
-            })->count();
-
-        return $activeTenantsCount * 35.90 * 0.40;
+        return $this->active_clients_count * 35.90 * 0.40;
     }
 
     /**
@@ -49,9 +46,22 @@ class Seller extends Model
      */
     public function getActiveClientsCountAttribute(): int
     {
+        // Use loaded collection if available to ensure logic matches PHP time/attributes
+        if ($this->relationLoaded('tenants')) {
+            return $this->tenants->filter(function ($tenant) {
+                // Ensure users are loaded or fetch them
+                $users = $tenant->relationLoaded('users') ? $tenant->users : $tenant->users()->get();
+                
+                return $users->contains(function ($user) {
+                    return $user->hasActiveSubscription();
+                });
+            })->count();
+        }
+
         return $this->tenants()
             ->whereHas('users', function ($query) {
                 $query->where('is_active', true)
+                    ->whereNotNull('subscription_expires_at')
                     ->where('subscription_expires_at', '>', Carbon::now());
             })->count();
     }

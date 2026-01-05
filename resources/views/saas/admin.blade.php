@@ -58,17 +58,31 @@
                             {{ $user->tenant && $user->tenant->seller ? $user->tenant->seller->full_name : 'Directo' }}
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
-                            @if($user->is_active)
-                                <span class="px-2 py-1 text-[10px] font-bold rounded-full bg-green-100 text-green-700 uppercase">Activo</span>
-                            @else
-                                <span class="px-2 py-1 text-[10px] font-bold rounded-full bg-red-100 text-red-700 uppercase">Baneado</span>
-                            @endif
+                            @switch($user->status_label)
+                                @case('Activo')
+                                    <span class="px-2 py-1 text-[10px] font-bold rounded-full bg-green-100 text-green-700 uppercase">Activo</span>
+                                    @break
+                                @case('Vencido')
+                                    <span class="px-2 py-1 text-[10px] font-bold rounded-full bg-orange-100 text-orange-700 uppercase">Vencido</span>
+                                    @break
+                                @case('Baneado')
+                                    <span class="px-2 py-1 text-[10px] font-bold rounded-full bg-red-100 text-red-700 uppercase">Baneado</span>
+                                    @break
+                            @endswitch
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="text-sm {{ $user->days_remaining <= 5 ? 'text-red-600 font-bold' : 'text-gray-900' }}">
+                            <div class="text-sm {{ ($user->days_remaining <= 5 && $user->hasActiveSubscription()) ? 'text-red-600 font-bold' : ($user->status_label === 'Vencido' ? 'text-orange-600 font-medium' : 'text-gray-900') }}">
                                 {{ $user->subscription_expires_at ? $user->subscription_expires_at->format('d/m/Y') : 'N/A' }}
                             </div>
-                            <div class="text-xs text-gray-400">Quedan {{ $user->days_remaining }} días</div>
+                            <div class="text-xs text-gray-400">
+                                @if($user->status_label === 'Vencido')
+                                    <span class="text-orange-600 font-bold">Expirado</span>
+                                @elseif($user->days_remaining > 0)
+                                    Quedan {{ $user->days_remaining }} días
+                                @else
+                                    -
+                                @endif
+                            </div>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                             @if(!$user->isSuperAdmin())
