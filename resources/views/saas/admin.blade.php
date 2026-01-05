@@ -140,7 +140,7 @@
         <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
             <div class="fixed inset-0 transition-opacity" @click="showHotelModal = false"><div class="absolute inset-0 bg-gray-900 opacity-75"></div></div>
             <span class="hidden sm:inline-block sm:align-middle sm:h-screen"></span>&#8203;
-            <div class="inline-block align-bottom bg-white rounded-2xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+            <div class="relative z-10 inline-block align-bottom bg-white rounded-2xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
                 <form action="{{ route('saas.hotel.store') }}" method="POST">
                     @csrf
                     <div class="bg-white px-6 pt-6 pb-4 sm:p-8">
@@ -199,7 +199,7 @@
         <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
             <div class="fixed inset-0 transition-opacity" @click="showSellerModal = false"><div class="absolute inset-0 bg-gray-900 opacity-75"></div></div>
             <span class="hidden sm:inline-block sm:align-middle sm:h-screen"></span>&#8203;
-            <div class="inline-block align-bottom bg-white rounded-2xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+            <div class="relative z-10 inline-block align-bottom bg-white rounded-2xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
                 <form action="{{ route('saas.seller.store') }}" method="POST">
                     @csrf
                     <div class="bg-white px-6 pt-6 pb-4 sm:p-8">
