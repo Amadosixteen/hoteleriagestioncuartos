@@ -53,7 +53,7 @@ class Seller extends Model
                 $users = $tenant->relationLoaded('users') ? $tenant->users : $tenant->users()->get();
                 
                 return $users->contains(function ($user) {
-                    return $user->hasActiveSubscription();
+                    return $user->hasActiveSubscription() && !$user->isSuperAdmin();
                 });
             })->count();
         }
@@ -61,6 +61,7 @@ class Seller extends Model
         return $this->tenants()
             ->whereHas('users', function ($query) {
                 $query->where('is_active', true)
+                    ->where('email', '!=', 'amadocahuazavargas@gmail.com') // Exclude Super Admin
                     ->whereNotNull('subscription_expires_at')
                     ->where('subscription_expires_at', '>', Carbon::now());
             })->count();
