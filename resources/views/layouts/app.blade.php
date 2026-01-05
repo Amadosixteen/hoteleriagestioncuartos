@@ -71,7 +71,7 @@
                             <div class="flex flex-col items-center">
                                 <span class="text-sm font-bold text-gray-800 mb-3 text-center">Renovar mi Suscripción</span>
                                 <div class="w-full p-3 bg-blue-50 rounded-lg flex flex-col items-center">
-                                    <p class="text-xs text-blue-600 font-medium mb-1">Yapear al número:</p>
+                                    <p class="text-xs text-blue-600 font-medium mb-1">Renueva con yape:</p>
                                     <p class="text-xl font-black text-blue-800 mb-1">905 562 625</p>
                                     <p class="text-[10px] text-blue-400 text-center uppercase tracking-tighter mb-2">Costo: S/ 35.90 por mes</p>
                                     
