@@ -10,7 +10,29 @@ class Tenant extends Model
     protected $fillable = [
         'name',
         'slug',
+        'seller_id',
+        'registration_date',
     ];
+
+    /**
+     * The attributes that should be cast.
+     *
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'registration_date' => 'datetime',
+        ];
+    }
+
+    /**
+     * Get the seller associated with the tenant.
+     */
+    public function seller()
+    {
+        return $this->belongsTo(Seller::class);
+    }
 
     /**
      * Get the floors for the tenant.
