@@ -25,22 +25,24 @@ Route::middleware(['auth', 'tenant'])->group(function () {
     Route::get('/api/rooms/status', [ReservationController::class, 'getRoomStatus'])->name('api.rooms.status');
     Route::post('/rooms/{id}/toggle-cleaning', [ReservationController::class, 'toggleCleaning'])->name('rooms.toggle-cleaning');
     
-    // Management Routes
-    Route::get('/hotels', [App\Http\Controllers\HotelController::class, 'index'])->name('hotels.index');
-    Route::post('/hotels/{id}/switch', [App\Http\Controllers\HotelController::class, 'switch'])->name('hotels.switch');
-    
-    Route::resource('floors', App\Http\Controllers\FloorController::class);
-    Route::resource('rooms', App\Http\Controllers\RoomController::class);
-    Route::post('/rooms/reorder', [App\Http\Controllers\RoomController::class, 'reorder'])->name('rooms.reorder');
+    // Management Routes (Solo Super Admin)
+    Route::middleware(['superadmin'])->group(function () {
+        Route::get('/hotels', [App\Http\Controllers\HotelController::class, 'index'])->name('hotels.index');
+        Route::post('/hotels/{id}/switch', [App\Http\Controllers\HotelController::class, 'switch'])->name('hotels.switch');
+        
+        Route::resource('floors', App\Http\Controllers\FloorController::class);
+        Route::resource('rooms', App\Http\Controllers\RoomController::class);
+        Route::post('/rooms/reorder', [App\Http\Controllers\RoomController::class, 'reorder'])->name('rooms.reorder');
 
-    Route::get('/analytics', [App\Http\Controllers\AnalyticsController::class, 'index'])->name('analytics.index');
-    Route::get('/calendar', [App\Http\Controllers\CalendarController::class, 'index'])->name('calendar.index');
-    
-    // Rutas de Administración SaaS (Solo Amado)
-    Route::get('/saas-management', [App\Http\Controllers\SaaSAdminController::class, 'index'])->name('saas.admin');
-    Route::post('/saas-management/renew/{id}', [App\Http\Controllers\SaaSAdminController::class, 'renew'])->name('saas.renew');
-    Route::post('/saas-management/hotel', [App\Http\Controllers\SaaSAdminController::class, 'storeHotel'])->name('saas.hotel.store');
-    Route::post('/saas-management/seller', [App\Http\Controllers\SaaSAdminController::class, 'storeSeller'])->name('saas.seller.store');
+        Route::get('/analytics', [App\Http\Controllers\AnalyticsController::class, 'index'])->name('analytics.index');
+        Route::get('/calendar', [App\Http\Controllers\CalendarController::class, 'index'])->name('calendar.index');
+        
+        // Rutas de Administración SaaS
+        Route::get('/saas-management', [App\Http\Controllers\SaaSAdminController::class, 'index'])->name('saas.admin');
+        Route::post('/saas-management/renew/{id}', [App\Http\Controllers\SaaSAdminController::class, 'renew'])->name('saas.renew');
+        Route::post('/saas-management/hotel', [App\Http\Controllers\SaaSAdminController::class, 'storeHotel'])->name('saas.hotel.store');
+        Route::post('/saas-management/seller', [App\Http\Controllers\SaaSAdminController::class, 'storeSeller'])->name('saas.seller.store');
+    });
     
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 });
