@@ -54,6 +54,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                         </svg>
                     </button>
+                    <input type="text" id="hidden-date-picker" class="hidden">
                 </div>
 
                 <div class="grid grid-cols-2 gap-2">
@@ -140,12 +141,17 @@
 
 @push('styles')
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-<link rel="stylesheet" type="text/css" href="https://npmcdn.com/flatpickr/dist/themes/material_blue.css">
 <style>
     .flatpickr-calendar {
-        border-radius: 1rem;
-        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-        border: none;
+        background: #fff;
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
+        font-family: inherit;
+    }
+    .flatpickr-day.selected {
+        background: #2563eb !important;
+        border-color: #2563eb !important;
     }
 </style>
 @endpush
@@ -174,12 +180,16 @@ function cajaReport() {
         },
 
         async init() {
-            flatpickr("#date-picker-trigger", {
+            const picker = flatpickr("#hidden-date-picker", {
                 locale: 'es',
                 dateFormat: "Y-m-d",
                 onChange: (selectedDates, dateStr) => {
                     this.fetchData({ date: dateStr });
                 }
+            });
+
+            document.getElementById('date-picker-trigger').addEventListener('click', () => {
+                picker.open();
             });
 
             await this.fetchData();
