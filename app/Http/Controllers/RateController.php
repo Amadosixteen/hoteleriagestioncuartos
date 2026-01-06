@@ -17,15 +17,7 @@ class RateController extends Controller
             $q->orderBy('position');
         }])->paginate(1); // Una página por piso para máxima claridad
 
-        // Obtener tipos de habitación únicos y sus precios promedio o representativos
-        $roomTypes = Room::distinct()->pluck('type');
-        
-        $typeRates = [];
-        foreach ($roomTypes as $type) {
-            $typeRates[$type] = round(Room::where('type', $type)->where('price', '>', 0)->avg('price') ?? 0, 2);
-        }
-
-        return view('rates.index', compact('floors', 'typeRates'));
+        return view('rates.index', compact('floors'));
     }
 
     /**

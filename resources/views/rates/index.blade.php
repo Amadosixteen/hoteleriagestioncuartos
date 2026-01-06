@@ -156,11 +156,11 @@ function rateManager() {
         isLoading: false,
         notification: { show: false, message: '', type: 'success' },
         bulkPrices: {
-            'Solo': '{{ number_format($typeRates['Solo'] ?? 0, 2, '.', '') }}',
-            'Doble': '{{ number_format($typeRates['Doble'] ?? 0, 2, '.', '') }}',
-            'Triple': '{{ number_format($typeRates['Triple'] ?? 0, 2, '.', '') }}',
-            'Matrimonial': '{{ number_format($typeRates['Matrimonial'] ?? 0, 2, '.', '') }}',
-            'Familiar': '{{ number_format($typeRates['Familiar'] ?? 0, 2, '.', '') }}'
+            'Solo': '',
+            'Doble': '',
+            'Triple': '',
+            'Matrimonial': '',
+            'Familiar': ''
         },
 
         async updateBulk(type) {
