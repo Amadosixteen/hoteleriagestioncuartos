@@ -17,6 +17,7 @@ class CajaController extends Controller
 
     public function data(Request $request)
     {
+        app()->setLocale('es');
         $tenantId = auth()->user()->tenant_id;
         $month = $request->get('month', date('n'));
         $year = $request->get('year', date('Y'));
