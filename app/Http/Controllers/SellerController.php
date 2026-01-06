@@ -49,7 +49,7 @@ class SellerController extends Controller
                 $q->where('email', '!=', 'amadocahuazavargas@gmail.com')
                   ->whereNull('seller_id');
             })
-            ->get();
+            ->paginate(50);
             $totalClients = $tenants->count();
 
             // 2. Suscripciones Activas
@@ -94,7 +94,7 @@ class SellerController extends Controller
                 ->with(['users' => function($q) {
                     $q->whereNull('seller_id'); // No mezclar con el staff
                 }])
-                ->get();
+                ->paginate(50);
             $sellerName = $seller->full_name;
             
             // Lógica original del modelo Seller (re-calculada aquí o usada de la vista si se pasaba implícitamente)

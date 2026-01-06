@@ -26,7 +26,7 @@ class SaaSAdminController extends Controller
 
         $users = User::with('tenant.seller')
             ->orderBy('subscription_expires_at', 'asc')
-            ->get();
+            ->paginate(50);
 
         $sellers = Seller::with('tenants.users')->get();
 

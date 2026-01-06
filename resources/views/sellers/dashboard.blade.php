@@ -165,7 +165,18 @@
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         @if($user && $user->hasActiveSubscription() && $user->subscription_type !== 'trial')
-                                            <span class="text-sm font-bold text-green-600">+ S/ 14.36</span>
+                                            @if(auth()->user()->isSuperAdmin())
+                                                @if(!$tenant->seller_id)
+                                                    <span class="text-sm font-bold text-green-600">+ S/ 35.90</span>
+                                                    <div class="text-[9px] text-gray-400 uppercase">Venta Directa (100%)</div>
+                                                @else
+                                                    <span class="text-sm font-bold text-indigo-600">+ S/ 21.54</span>
+                                                    <div class="text-[9px] text-gray-400 uppercase">Proporción SaaS (60%)</div>
+                                                @endif
+                                            @else
+                                                <span class="text-sm font-bold text-green-600">+ S/ 14.36</span>
+                                                <div class="text-[9px] text-gray-400 uppercase">Comisión (40%)</div>
+                                            @endif
                                         @else
                                             <span class="text-sm text-gray-400">S/ 0.00</span>
                                         @endif
@@ -181,6 +192,11 @@
                         </tbody>
                     </table>
                 </div>
+                @if($tenants->hasPages())
+                    <div class="px-6 py-4 border-t border-gray-100 bg-gray-50/30">
+                        {{ $tenants->links() }}
+                    </div>
+                @endif
             </div>
         </div>
     </div>
