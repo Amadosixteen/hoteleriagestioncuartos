@@ -28,6 +28,8 @@ Route::middleware(['auth', 'tenant'])->group(function () {
     // Management Routes (General para dueños de hotel)
     Route::resource('floors', App\Http\Controllers\FloorController::class);
     Route::resource('rooms', App\Http\Controllers\RoomController::class);
+    Route::get('/rates', [App\Http\Controllers\RateController::class, 'index'])->name('rates.index');
+    Route::post('/rates/update', [App\Http\Controllers\RateController::class, 'update'])->name('rates.update');
     Route::post('/rooms/reorder', [App\Http\Controllers\RoomController::class, 'reorder'])->name('rooms.reorder');
 
     Route::get('/analytics', [App\Http\Controllers\AnalyticsController::class, 'index'])->name('analytics.index');
