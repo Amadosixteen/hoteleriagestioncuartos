@@ -15,6 +15,8 @@ class Reservation extends Model
         'check_out_at',
         'duration_hours',
         'has_vehicle',
+        'price',
+        'total_price',
         'status',
     ];
 

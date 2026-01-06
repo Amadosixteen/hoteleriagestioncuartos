@@ -59,6 +59,8 @@ class ReservationController extends Controller
                 'check_out_at' => $checkOutAt,
                 'duration_hours' => $validated['duration_hours'],
                 'has_vehicle' => $hasVehicle,
+                'price' => $room->price,
+                'total_price' => $room->price * $validated['duration_hours'],
                 'status' => 'active',
             ]);
 
@@ -127,6 +129,7 @@ class ReservationController extends Controller
                 $reservation->update([
                     'check_out_at' => $checkOutAt,
                     'duration_hours' => $durationHours,
+                    'total_price' => $reservation->price * $durationHours,
                 ]);
             }
 
