@@ -69,39 +69,52 @@
                             </div>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 italic">
-                            {{ $user->tenant && $user->tenant->seller ? $user->tenant->seller->full_name : 'Directo' }}
+                            @if($user->isSuperAdmin())
+                                <span class="text-indigo-600 font-bold not-italic">Dueño del Software</span>
+                            @else
+                                {{ $user->tenant && $user->tenant->seller ? $user->tenant->seller->full_name : 'Directo' }}
+                            @endif
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
-                            @switch($user->status_label)
-                                @case('Activo')
-                                    <span class="px-2 py-1 text-[10px] font-bold rounded-full bg-green-100 text-green-700 uppercase">Activo</span>
-                                    @break
-                                @case('Vencido')
-                                    <span class="px-2 py-1 text-[10px] font-bold rounded-full bg-orange-100 text-orange-700 uppercase">Vencido</span>
-                                    @break
-                                @case('Baneado')
-                                    <span class="px-2 py-1 text-[10px] font-bold rounded-full bg-red-100 text-red-700 uppercase">Baneado</span>
-                                    @break
-                            @endswitch
-                            <div class="mt-1">
-                                <span class="text-[9px] font-bold uppercase tracking-wider {{ $user->subscription_type === 'trial' ? 'text-gray-500 bg-gray-100 px-1.5 py-0.5 rounded' : 'text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded' }}">
-                                    {{ $user->subscription_type === 'trial' ? 'Prueba' : 'Mensual' }}
-                                </span>
-                            </div>
+                            @if($user->isSuperAdmin())
+                                <span class="px-2 py-1 text-[10px] font-bold rounded-full bg-indigo-600 text-white uppercase shadow-sm">SISTEMA</span>
+                            @else
+                                @switch($user->status_label)
+                                    @case('Activo')
+                                        <span class="px-2 py-1 text-[10px] font-bold rounded-full bg-green-100 text-green-700 uppercase">Activo</span>
+                                        @break
+                                    @case('Vencido')
+                                        <span class="px-2 py-1 text-[10px] font-bold rounded-full bg-orange-100 text-orange-700 uppercase">Vencido</span>
+                                        @break
+                                    @case('Baneado')
+                                        <span class="px-2 py-1 text-[10px] font-bold rounded-full bg-red-100 text-red-700 uppercase">Baneado</span>
+                                        @break
+                                @endswitch
+                                <div class="mt-1">
+                                    <span class="text-[9px] font-bold uppercase tracking-wider {{ $user->subscription_type === 'trial' ? 'text-gray-500 bg-gray-100 px-1.5 py-0.5 rounded' : 'text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded' }}">
+                                        {{ $user->subscription_type === 'trial' ? 'Prueba' : 'Mensual' }}
+                                    </span>
+                                </div>
+                            @endif
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="text-sm {{ ($user->days_remaining <= 5 && $user->hasActiveSubscription()) ? 'text-red-600 font-bold' : ($user->status_label === 'Vencido' ? 'text-orange-600 font-medium' : 'text-gray-900') }}">
-                                {{ $user->subscription_expires_at ? $user->subscription_expires_at->format('d/m/Y') : 'N/A' }}
-                            </div>
-                            <div class="text-xs text-gray-400">
-                                @if($user->status_label === 'Vencido')
-                                    <span class="text-orange-600 font-bold">Expirado</span>
-                                @elseif($user->days_remaining > 0)
-                                    Quedan {{ $user->days_remaining }} días
-                                @else
-                                    -
-                                @endif
-                            </div>
+                            @if($user->isSuperAdmin())
+                                <div class="text-sm font-bold text-indigo-600">Ilimitado</div>
+                                <div class="text-[10px] text-indigo-400 uppercase tracking-tighter">Acceso Perpetuo</div>
+                            @else
+                                <div class="text-sm {{ ($user->days_remaining <= 5 && $user->hasActiveSubscription()) ? 'text-red-600 font-bold' : ($user->status_label === 'Vencido' ? 'text-orange-600 font-medium' : 'text-gray-900') }}">
+                                    {{ $user->subscription_expires_at ? $user->subscription_expires_at->format('d/m/Y') : 'N/A' }}
+                                </div>
+                                <div class="text-xs text-gray-400">
+                                    @if($user->status_label === 'Vencido')
+                                        <span class="text-orange-600 font-bold">Expirado</span>
+                                    @elseif($user->days_remaining > 0)
+                                        Quedan {{ $user->days_remaining }} días
+                                    @else
+                                        -
+                                    @endif
+                                </div>
+                            @endif
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                             @if(!$user->isSuperAdmin())

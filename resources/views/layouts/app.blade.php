@@ -54,7 +54,7 @@
                 <!-- Usuario y Logout (Desktop) -->
                 <div class="hidden sm:flex items-center space-x-6" x-data="{ showYape: false }">
                     <!-- Suscripción Desktop (Interactiva) -->
-                    @if(auth()->user()->tenant)
+                    @if(auth()->user()->tenant && !auth()->user()->isSuperAdmin())
                     <div class="relative">
                         <button @click="showYape = !showYape" class="flex flex-col items-end space-y-1 hover:opacity-80 transition-opacity focus:outline-none">
                             <div class="flex items-center space-x-2">
@@ -133,7 +133,7 @@
                     <div class="px-3 text-xs font-semibold text-gray-500 uppercase mb-2">{{ auth()->user()->name }}</div>
                     
                     <!-- Mi Suscripción Móvil -->
-                    @if(auth()->user()->tenant)
+                    @if(auth()->user()->tenant && !auth()->user()->isSuperAdmin())
                     <div class="px-3 py-3 bg-gray-50 rounded-lg mx-2 mb-3">
                         <div class="flex justify-between items-center mb-2">
                             <span class="text-sm font-bold text-gray-700">Mi Suscripción</span>

@@ -77,6 +77,8 @@ class User extends Authenticatable
      */
     public function hasActiveSubscription(): bool
     {
+        if ($this->isSuperAdmin()) return true;
+        
         return $this->is_active && 
                $this->subscription_expires_at && 
                $this->subscription_expires_at->isFuture();
@@ -87,6 +89,10 @@ class User extends Authenticatable
      */
     public function getStatusLabelAttribute(): string
     {
+        if ($this->isSuperAdmin()) {
+            return 'SISTEMA';
+        }
+
         if (!$this->is_active) {
             return 'Baneado';
         }
