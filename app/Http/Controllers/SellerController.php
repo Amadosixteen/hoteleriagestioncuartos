@@ -37,17 +37,62 @@ class SellerController extends Controller
         $seller = $user->seller;
 
         if ($user->isSuperAdmin()) {
-            // Caso especial: Super Admin viendo la ruta de vendedores.
-            // Podríamos mostrar todos los tenants con vendedor?
-            // Para cumplir estrictamente "casi la misma información", mostraremos todos los tenants asignados a algún vendedor?
-            // O simplemente todos los tenants.
-            $tenants = Tenant::with(['users', 'seller'])->whereNotNull('seller_id')->get();
-            $sellerName = 'Super Admin (Vista Global)';
+            // 1. Clientes Directos (Total histórico)
+            $tenants = Tenant::with(['users'])->whereNull('seller_id')->get();
+            $totalClients = $tenants->count();
+
+            // 2. Suscripciones Activas
+            // A. Directas
+            $activeDirectCount = User::where('is_active', true)
+                ->whereHas('tenant', function($q) { 
+                    $q->whereNull('seller_id'); 
+                })->count();
+
+            // B. De Vendedores
+            $activeSellerCount = User::where('is_active', true)
+                ->whereHas('tenant', function($q) { 
+                    $q->whereNotNull('seller_id'); 
+                })->count();
+
+            $activeClients = $activeDirectCount + $activeSellerCount;
+
+            // 3. Ganancia Mensual (Estimada)
+            // - Directas: 100% de 35.90
+            // - Vendedores: 60% de 35.90 (porque 40% es del vendedor)
+            $directIncome = $activeDirectCount * 35.90;
+            $sellerIncome = $activeSellerCount * (35.90 * 0.60);
+            
+            $monthlyCommission = $directIncome + $sellerIncome;
+            
+            // Pasar variables extra a la vista para mostrar detalles si es necesario
+            // Usaremos una variable de sesión flash o view shares si la vista no soporta cambios de variable,
+            // pero mejor pasamos todo en compact.
+            // NOTA: La vista espera $activeClients para el KPI.
+            // Para "mostrar directas y total", podriamos pasar un string o variables separadas.
+            // Vamos a pasar variables separadas y actualizar la vista.
+            
+            $sellerName = 'Super Admin (Ganancias Globales)';
+            
+            return view('sellers.dashboard', compact('tenants', 'sellerName', 'totalClients', 'activeClients', 'monthlyCommission', 'activeDirectCount'));
+
         } else {
             $tenants = $seller->tenants()->with('users')->get();
             $sellerName = $seller->full_name;
+            
+            // Lógica original del modelo Seller (re-calculada aquí o usada de la vista si se pasaba implícitamente)
+            // En el controlador original NO se pasaban $totalClients, etc. Se calculaban en la vista o modelo??
+            // Espera, el controlador original solo pasaba $tenants y $sellerName.
+            // La vista sellers.dashboard hacía cálculos con blade/php embebido? Vamos a revisar la vista.
+            // SI, la vista original tenía lógica: 
+            // $totalClients = $tenants->count(); 
+            // $activeClients = $tenants->filter(...)->count();
+            // $monthlyCommission = ...
+            
+            // Para mantener compatibilidad, si NO pasamos estas variables, la vista debería calcularlas como antes.
+            // PERO si las pasamos, la vista debería usarlas.
+            // Modificaremos la vista para usar lass variables si existen, o calcularlas si no.
+            
+            return view('sellers.dashboard', compact('tenants', 'sellerName'));
         }
-
-        return view('sellers.dashboard', compact('tenants', 'sellerName'));
     }
 }
