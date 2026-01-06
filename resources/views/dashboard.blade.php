@@ -7,37 +7,70 @@
     <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-6 gap-4">
         <h2 class="text-2xl font-bold text-gray-900">Gestión de Cuartos</h2>
         
-        <!-- Filtros de Tipo -->
-        <div class="flex flex-wrap gap-2 bg-white p-1 rounded-xl border border-gray-100 shadow-sm h-fit">
-            <button @click="filterType = 'all'" 
-                :class="filterType === 'all' ? 'bg-blue-600 text-white shadow-md' : 'text-gray-500 hover:bg-gray-50'"
-                class="px-4 py-1.5 rounded-lg text-xs font-bold transition-all uppercase tracking-wider">
-                Todos
-            </button>
-            <template x-for="type in ['Solo', 'Doble', 'Triple', 'Matrimonial', 'Familiar']">
-                <button @click="filterType = type" 
-                    :class="filterType === type ? 'bg-blue-600 text-white shadow-md' : 'text-gray-500 hover:bg-gray-50'"
-                    class="px-4 py-1.5 rounded-lg text-xs font-bold transition-all uppercase tracking-wider"
-                    x-text="type">
+        <!-- Filtros -->
+        <div class="flex flex-wrap items-center gap-4">
+            <!-- Filtro de Tipo (Existente) -->
+            <div class="flex flex-wrap gap-2 bg-white p-1 rounded-xl border border-gray-100 shadow-sm h-fit">
+                <button @click="filterType = 'all'" 
+                    :class="filterType === 'all' ? 'bg-blue-600 text-white shadow-md' : 'text-gray-500 hover:bg-gray-50'"
+                    class="px-4 py-1.5 rounded-lg text-xs font-bold transition-all uppercase tracking-wider">
+                    Todos
                 </button>
-            </template>
+                <template x-for="type in ['Solo', 'Doble', 'Triple', 'Matrimonial', 'Familiar']">
+                    <button @click="filterType = type" 
+                        :class="filterType === type ? 'bg-blue-600 text-white shadow-md' : 'text-gray-500 hover:bg-gray-50'"
+                        class="px-4 py-1.5 rounded-lg text-xs font-bold transition-all uppercase tracking-wider"
+                        x-text="type">
+                    </button>
+                </template>
+            </div>
+
+            <!-- Filtro de Precio (Nuevo) -->
+            <div class="flex items-center gap-2 bg-white p-1 rounded-xl border border-gray-100 shadow-sm h-fit">
+                <button @click="sortByPrice = (sortByPrice === 'desc' ? null : 'desc')"
+                    :class="sortByPrice === 'desc' ? 'bg-green-600 text-white shadow-md' : 'text-gray-500 hover:bg-gray-50'"
+                    class="px-4 py-1.5 rounded-lg text-xs font-bold transition-all uppercase tracking-wider flex items-center gap-2">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4h13M3 8h9m-9 4h6m4 0l4-4m0 0l4 4m-4-4v12"></path></svg>
+                    <span>Mayor a Menor</span>
+                </button>
+            </div>
         </div>
     </div>
 
-    @foreach($floors as $floor)
-    <div class="mb-8">
-        <h3 class="text-lg font-semibold text-gray-800 mb-4">{{ $floor->name }}</h3>
-        
-        <!-- Grid de cuartos (10 columnas) -->
-        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-10 gap-3">
-            @foreach($floor->rooms as $room)
-                <div x-show="filterType === 'all' || filterType === '{{ $room->type }}'" x-transition>
-                    <x-room-card :room="$room" />
+    <!-- Si NO hay orden por precio, mostramos por pisos (Original) -->
+    <template x-if="!sortByPrice">
+        <div>
+            @foreach($floors as $floor)
+            <div class="mb-8">
+                <h3 class="text-lg font-semibold text-gray-800 mb-4">{{ $floor->name }}</h3>
+                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-10 gap-3">
+                    @foreach($floor->rooms as $room)
+                        <div x-show="filterType === 'all' || filterType === '{{ $room->type }}'" x-transition>
+                            <x-room-card :room="$room" />
+                        </div>
+                    @endforeach
                 </div>
+            </div>
             @endforeach
         </div>
-    </div>
-    @endforeach
+    </template>
+
+    <!-- Si HAY orden por precio, mostramos todo junto ordenado -->
+    <template x-if="sortByPrice">
+        <div class="mb-8">
+            <h3 class="text-lg font-semibold text-gray-800 mb-4">Habitaciones (Ordenadas por Precio)</h3>
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-10 gap-3">
+                @php
+                    $allRooms = $floors->flatMap->rooms->sortByDesc('price');
+                @endphp
+                @foreach($allRooms as $room)
+                    <div x-show="filterType === 'all' || filterType === '{{ $room->type }}'" x-transition>
+                        <x-room-card :room="$room" />
+                    </div>
+                @endforeach
+            </div>
+        </div>
+    </template>
 
     <!-- Modal de Reserva -->
     <x-reservation-modal />
@@ -97,7 +130,9 @@ function dashboardApp() {
         showModal: false,
         selectedRoom: null,
         selectedRoomType: '',
+        selectedRoomPrice: 0,
         filterType: 'all',
+        sortByPrice: null,
         reservation: null,
         guests: [{ 
             document_type: 'dni', 
@@ -124,6 +159,7 @@ function dashboardApp() {
             // Listen for room click events
             window.addEventListener('open-reservation-modal', (event) => {
                 this.selectedRoomType = event.detail.roomType;
+                this.selectedRoomPrice = event.detail.roomPrice;
                 this.openModal(event.detail.roomId, event.detail.hasReservation, event.detail.status);
             });
         },
