@@ -93,6 +93,10 @@ class User extends Authenticatable
             return 'SISTEMA';
         }
 
+        if ($this->isSeller()) {
+            return 'VENDEDOR';
+        }
+
         if (!$this->is_active) {
             return 'Baneado';
         }

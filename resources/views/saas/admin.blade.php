@@ -117,15 +117,17 @@
                             @endif
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                            @if(!$user->isSuperAdmin())
-                            <form action="{{ route('saas.renew', $user->id) }}" method="POST" class="inline">
-                                @csrf
-                                <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors shadow-sm font-bold text-xs uppercase tracking-widest">
-                                    +30 Días
-                                </button>
-                            </form>
+                            @if($user->isSuperAdmin())
+                                <span class="text-gray-400 italic text-xs">Dueño del SaaS</span>
+                            @elseif($user->isSeller())
+                                <span class="text-gray-400 italic text-xs">Acceso Staff</span>
                             @else
-                            <span class="text-gray-400 italic text-xs">Dueño del SaaS</span>
+                                <form action="{{ route('saas.renew', $user->id) }}" method="POST" class="inline">
+                                    @csrf
+                                    <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors shadow-sm font-bold text-xs uppercase tracking-widest">
+                                        +30 Días
+                                    </button>
+                                </form>
                             @endif
                         </td>
                     </tr>
