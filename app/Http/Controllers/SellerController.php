@@ -69,11 +69,25 @@ class SellerController extends Controller
 
             $activeClients = $activeDirectCount + $activeSellerCount;
 
-            // 3. Ganancia Mensual (Estimada)
+            // 3. Ganancia Mensual (Solo Pagadas - Excluye Trial)
+            $paidDirectCount = User::where('is_active', true)
+                ->where('email', '!=', 'amadocahuazavargas@gmail.com')
+                ->where('subscription_type', '!=', 'trial')
+                ->whereHas('tenant', function($q) { 
+                    $q->whereNull('seller_id'); 
+                })->count();
+
+            $paidSellerCount = User::where('is_active', true)
+                ->where('email', '!=', 'amadocahuazavargas@gmail.com')
+                ->where('subscription_type', '!=', 'trial')
+                ->whereHas('tenant', function($q) { 
+                    $q->whereNotNull('seller_id'); 
+                })->count();
+
             // - Directas: 100% de 35.90
             // - Vendedores: 60% de 35.90 (porque 40% es del vendedor)
-            $directIncome = $activeDirectCount * 35.90;
-            $sellerIncome = $activeSellerCount * (35.90 * 0.60);
+            $directIncome = $paidDirectCount * 35.90;
+            $sellerIncome = $paidSellerCount * (35.90 * 0.60);
             
             $monthlyCommission = $directIncome + $sellerIncome;
             
@@ -95,22 +109,13 @@ class SellerController extends Controller
                     $q->whereNull('seller_id'); // No mezclar con el staff
                 }])
                 ->paginate(50);
+            
             $sellerName = $seller->full_name;
-            
-            // Lógica original del modelo Seller (re-calculada aquí o usada de la vista si se pasaba implícitamente)
-            // En el controlador original NO se pasaban $totalClients, etc. Se calculaban en la vista o modelo??
-            // Espera, el controlador original solo pasaba $tenants y $sellerName.
-            // La vista sellers.dashboard hacía cálculos con blade/php embebido? Vamos a revisar la vista.
-            // SI, la vista original tenía lógica: 
-            // $totalClients = $tenants->count(); 
-            // $activeClients = $tenants->filter(...)->count();
-            // $monthlyCommission = ...
-            
-            // Para mantener compatibilidad, si NO pasamos estas variables, la vista debería calcularlas como antes.
-            // PERO si las pasamos, la vista debería usarlas.
-            // Modificaremos la vista para usar lass variables si existen, o calcularlas si no.
-            
-            return view('sellers.dashboard', compact('tenants', 'sellerName'));
+            $monthlyCommission = $seller->active_commissions;
+            $totalClients = $tenants->total();
+            $activeClients = $seller->active_clients_count;
+
+            return view('sellers.dashboard', compact('tenants', 'sellerName', 'monthlyCommission', 'totalClients', 'activeClients'));
         }
     }
 }

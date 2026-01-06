@@ -22,11 +22,13 @@
             <!-- Stats Logic -->
             @if(!isset($monthlyCommission))
                 @php
-                    $totalClients = $tenants->count();
+                    $totalClients = $tenants->total(); 
                     $activeClients = $tenants->filter(function($t) { 
-                        return $t->users->where('is_active', true)->filter(function($u) { return $u->hasActiveSubscription(); })->count() > 0; 
+                        return $t->users->where('is_active', true)
+                                      ->where('subscription_type', '!=', 'trial')
+                                      ->filter(function($u) { return $u->hasActiveSubscription(); })->count() > 0; 
                     })->count();
-                    // 35.90 price * 40% commission = 14.36 per active client
+                    // Solo comisionar lo pagado
                     $monthlyCommission = $activeClients * 35.90 * 0.40; 
                 @endphp
             @endif
