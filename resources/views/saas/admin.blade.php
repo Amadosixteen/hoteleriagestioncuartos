@@ -51,15 +51,15 @@
                     <tr class="{{ $user->isSuperAdmin() ? 'bg-blue-50/50' : '' }}">
                         <td class="px-6 py-4 whitespace-nowrap">
                             <div class="text-sm font-bold text-gray-900">{{ $user->name }}</div>
-                            <div class="text-xs text-gray-500">{{ $user->email }}</div>
-                            <div class="flex items-center gap-2 mt-1">
-                                <span class="text-[10px] text-indigo-600 font-bold uppercase">{{ $user->tenant ? $user->tenant->name : 'Sin Hotel' }}</span>
+                            <div class="text-xs text-gray-500 flex items-center gap-1.5">
+                                <span>{{ $user->email }}</span>
                                 @if($user->tenant && $user->tenant->phone)
-                                    <span class="text-[10px] text-gray-400 font-medium whitespace-nowrap">
-                                        <svg class="w-3 h-3 inline mr-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg>
-                                        {{ $user->tenant->phone }}
-                                    </span>
+                                    <span class="text-gray-300">•</span>
+                                    <span class="text-indigo-500 font-medium">{{ $user->tenant->phone }}</span>
                                 @endif
+                            </div>
+                            <div class="mt-1">
+                                <span class="text-[10px] text-indigo-600 font-bold uppercase tracking-tight">{{ $user->tenant ? $user->tenant->name : 'Sin Hotel' }}</span>
                             </div>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 italic">
