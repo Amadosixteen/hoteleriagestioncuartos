@@ -104,8 +104,12 @@
                         <tbody class="bg-white divide-y divide-gray-200">
                             @forelse($tenants as $tenant)
                                 @php 
-                                    $user = $tenant->users->first(); 
-                                    $statusColor = 'bg-gray-100 text-gray-800'; // Default undefined
+                                    // Buscar el usuario representante (el que NO es Super Admin y NO es vendedor)
+                                    $user = $tenant->users->filter(function($u) {
+                                        return !$u->isSuperAdmin() && !$u->isSeller();
+                                    })->first();
+                                    
+                                    $statusColor = 'bg-gray-100 text-gray-800';
                                     $statusText = 'Indefinido';
                                     
                                     if ($user) {

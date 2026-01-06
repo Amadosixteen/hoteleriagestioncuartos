@@ -38,13 +38,18 @@ class SellerController extends Controller
         $seller = $user->seller;
 
         if ($user->isSuperAdmin()) {
-            // 1. Clientes Directos (Excluyéndose a sí mismo)
-            $tenants = Tenant::with(['users'])
-                ->whereNull('seller_id')
-                ->whereHas('users', function($q) {
-                    $q->where('email', '!=', 'amadocahuazavargas@gmail.com');
-                })
-                ->get();
+            // 1. Clientes Directos (Excluyendo Super Admin y staff de la lista de hoteles)
+            $tenants = Tenant::with(['users' => function($q) {
+                // Solo cargar usuarios que son clientes reales, no el Super Admin ni otros staff
+                $q->where('email', '!=', 'amadocahuazavargas@gmail.com')
+                  ->whereNull('seller_id');
+            }])
+            ->whereNull('seller_id')
+            ->whereHas('users', function($q) {
+                $q->where('email', '!=', 'amadocahuazavargas@gmail.com')
+                  ->whereNull('seller_id');
+            })
+            ->get();
             $totalClients = $tenants->count();
 
             // 2. Suscripciones Activas
@@ -84,7 +89,12 @@ class SellerController extends Controller
             return view('sellers.dashboard', compact('tenants', 'sellerName', 'totalClients', 'activeClients', 'monthlyCommission', 'activeDirectCount'));
 
         } else {
-            $tenants = $seller->tenants()->with('users')->get();
+            // Para vendedores normales, cargar solo sus clientes reales
+            $tenants = $seller->tenants()
+                ->with(['users' => function($q) {
+                    $q->whereNull('seller_id'); // No mezclar con el staff
+                }])
+                ->get();
             $sellerName = $seller->full_name;
             
             // Lógica original del modelo Seller (re-calculada aquí o usada de la vista si se pasaba implícitamente)
