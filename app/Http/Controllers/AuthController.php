@@ -54,6 +54,10 @@ class AuthController extends Controller
             
             Auth::login($user);
             
+            if ($user->isSeller()) {
+                return redirect()->route('seller.dashboard');
+            }
+
             return redirect()->route('dashboard');
             
         } catch (\Exception $e) {

@@ -17,12 +17,22 @@ class EnsureTenantAccess
             return redirect()->route('login');
         }
 
-        if (!auth()->user()->tenant_id) {
+        $user = auth()->user();
+
+        // 1. Permitir acceso a Super Admin y Vendedores sin validar tenant/suscripción
+        if ($user->isSuperAdmin() || $user->isSeller()) {
+            // Si un vendedor intenta ir al dashboard principal (que requiere tenant), redirigirlo a SU dashboard
+            if ($user->isSeller() && $request->routeIs('dashboard')) {
+                return redirect()->route('seller.dashboard');
+            }
+            return $next($request);
+        }
+
+        // 2. Validar Tenant para usuarios normales (Dueños de Hotel)
+        if (!$user->tenant_id) {
             auth()->logout();
             return redirect()->route('login')->with('error', 'No tienes acceso a ningún hotel. Contacta al administrador.');
         }
-
-        $user = auth()->user();
 
         // Inicializar suscripción si es nula (para usuarios antiguos post-migración)
         if (!$user->subscription_expires_at) {

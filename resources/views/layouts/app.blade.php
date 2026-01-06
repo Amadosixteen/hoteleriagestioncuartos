@@ -27,7 +27,7 @@
                         <a href="{{ route('floors.index') }}" class="text-sm font-medium text-gray-700 hover:text-gray-900">Pisos</a>
                         <a href="{{ route('rooms.index') }}" class="text-sm font-medium text-gray-700 hover:text-gray-900">Habitaciones</a>
                         
-                        @if(auth()->user()->isSeller())
+                        @if(auth()->user()->isSeller() || auth()->user()->isSuperAdmin())
                         <a href="{{ route('seller.dashboard') }}" class="px-3 py-1 bg-green-100 text-green-700 rounded-lg text-xs font-bold hover:bg-green-200 transition-colors flex items-center space-x-1">
                             <span>Panel Vendedor</span>
                         </a>
