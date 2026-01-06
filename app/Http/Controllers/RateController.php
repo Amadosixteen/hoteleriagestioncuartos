@@ -22,7 +22,7 @@ class RateController extends Controller
         
         $typeRates = [];
         foreach ($roomTypes as $type) {
-            $typeRates[$type] = Room::where('type', $type)->where('price', '>', 0)->avg('price') ?? 0;
+            $typeRates[$type] = round(Room::where('type', $type)->where('price', '>', 0)->avg('price') ?? 0, 2);
         }
 
         return view('rates.index', compact('floors', 'typeRates'));

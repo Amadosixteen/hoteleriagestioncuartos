@@ -112,7 +112,7 @@
                                         <input type="number" 
                                                step="0.01" 
                                                id="price-{{ $room->id }}"
-                                               value="{{ $room->price }}" 
+                                               value="{{ number_format($room->price, 2, '.', '') }}" 
                                                class="w-24 bg-transparent border-none focus:ring-0 font-black text-gray-900 text-lg p-0"
                                                @change="updateIndividual({{ $room->id }}, $el.value)">
                                     </div>
@@ -156,11 +156,11 @@ function rateManager() {
         isLoading: false,
         notification: { show: false, message: '', type: 'success' },
         bulkPrices: {
-            'Solo': '{{ $typeRates['Solo'] ?? 0 }}',
-            'Doble': '{{ $typeRates['Doble'] ?? 0 }}',
-            'Triple': '{{ $typeRates['Triple'] ?? 0 }}',
-            'Matrimonial': '{{ $typeRates['Matrimonial'] ?? 0 }}',
-            'Familiar': '{{ $typeRates['Familiar'] ?? 0 }}'
+            'Solo': '{{ number_format($typeRates['Solo'] ?? 0, 2, '.', '') }}',
+            'Doble': '{{ number_format($typeRates['Doble'] ?? 0, 2, '.', '') }}',
+            'Triple': '{{ number_format($typeRates['Triple'] ?? 0, 2, '.', '') }}',
+            'Matrimonial': '{{ number_format($typeRates['Matrimonial'] ?? 0, 2, '.', '') }}',
+            'Familiar': '{{ number_format($typeRates['Familiar'] ?? 0, 2, '.', '') }}'
         },
 
         async updateBulk(type) {
