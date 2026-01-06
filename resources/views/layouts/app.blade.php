@@ -19,7 +19,7 @@
                     <h1 class="text-xl font-semibold text-gray-900">Sistema de Gestión Hotelera</h1>
                     <div class="hidden sm:flex space-x-4">
                         <a href="{{ route('dashboard') }}" class="text-sm font-medium text-gray-700 hover:text-gray-900">Dashboard</a>
-                        @if(auth()->user()->isAdmin())
+                        @if(auth()->user()->isSuperAdmin())
                         <a href="{{ route('hotels.index') }}" class="text-sm font-medium text-gray-700 hover:text-gray-900">Gestionar Hoteles</a>
                         @endif
                         <a href="{{ route('analytics.index') }}" class="text-sm font-medium text-gray-700 hover:text-gray-900">Analíticas</a>
@@ -104,7 +104,7 @@
         <div x-show="open" @click.away="open = false" class="sm:hidden border-t border-gray-100 bg-white" x-transition>
             <div class="px-2 pt-2 pb-3 space-y-1">
                 <a href="{{ route('dashboard') }}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-50">Dashboard</a>
-                @if(auth()->user()->isAdmin())
+                @if(auth()->user()->isSuperAdmin())
                 <a href="{{ route('hotels.index') }}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-50">Gestionar Hoteles</a>
                 @endif
                 <a href="{{ route('analytics.index') }}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-50">Analíticas</a>
