@@ -15,7 +15,7 @@ class RateController extends Controller
     {
         $floors = Floor::with(['rooms' => function($q) {
             $q->orderBy('position');
-        }])->get();
+        }])->paginate(1); // Una página por piso para máxima claridad
 
         // Obtener tipos de habitación únicos y sus precios promedio o representativos
         $roomTypes = Room::distinct()->pluck('type');

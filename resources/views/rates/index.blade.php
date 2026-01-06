@@ -128,6 +128,11 @@
                     </tbody>
                 </table>
             </div>
+            
+            <!-- Paginación Soft -->
+            <div class="px-6 py-4 bg-gray-50 border-t border-gray-100 mt-auto">
+                {{ $floors->links() }}
+            </div>
         </div>
     </div>
 

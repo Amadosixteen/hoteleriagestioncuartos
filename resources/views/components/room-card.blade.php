@@ -24,6 +24,11 @@
     @endif
     @click="window.dispatchEvent(new CustomEvent('open-reservation-modal', { detail: { roomId: {{ $room->id }}, roomType: '{{ $room->type }}', hasReservation: {{ $hasReservation ? 'true' : 'false' }}, status: '{{ $room->status }}' } }))"
 >
+    <!-- Room Price -->
+    <div class="absolute top-1 right-2">
+        <span class="text-[10px] font-black text-gray-500">S/ {{ number_format($room->price, 2) }}</span>
+    </div>
+
     <!-- Room Number & Type -->
     <div class="text-center mb-1">
         <span class="text-lg font-bold text-gray-800">{{ $room->room_number }}</span>
