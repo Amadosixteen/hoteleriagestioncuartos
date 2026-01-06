@@ -56,17 +56,29 @@ Route::get('/saas/secret-db-reset', function () {
         abort(403);
     }
     
-    // Cleanup Logic
-    \App\Models\Reservation::truncate();
-    \App\Models\Guest::truncate();
-    
-    // Rooms and Floors delete via cascade from Tenant
-    \App\Models\Tenant::query()->delete(); 
-    
-    // Delete all users except Super Admin
-    \App\Models\User::where('email', '!=', 'amadocahuazavargas@gmail.com')->delete();
-    
-    \App\Models\Seller::query()->delete();
-    
-    return "Base de datos de producción reiniciada exitosamente. Todas las habitaciones, reservas, vendedores y usuarios (excepto tú) han sido eliminados.";
+    try {
+        \Illuminate\Support\Facades\Schema::disableForeignKeyConstraints();
+
+        // 1. Limpiar tablas transaccionales
+        \App\Models\Reservation::truncate();
+        \App\Models\Guest::truncate();
+        
+        // 2. Limpiar estructura de hoteles
+        // Truncate es más rápido y resetea IDs, pero no hace cascada. Borramos explícitamente.
+        \App\Models\Room::truncate();
+        \App\Models\Floor::truncate();
+        \App\Models\Tenant::truncate(); 
+        
+        // 3. Limpiar usuarios y vendedores
+        \App\Models\Seller::truncate();
+        \App\Models\User::where('email', '!=', 'amadocahuazavargas@gmail.com')->delete();
+        
+        \Illuminate\Support\Facades\Schema::enableForeignKeyConstraints();
+        
+        return "ÉXITO: Base de datos de producción reiniciada. Se eliminaron hoteles, habitaciones, reservas y usuarios (excepto el Super Admin).";
+    } catch (\Exception $e) {
+        // En caso de error, reactivar checks y mostrar el mensaje
+        \Illuminate\Support\Facades\Schema::enableForeignKeyConstraints();
+        return "ERROR: " . $e->getMessage() . " - FILE: " . $e->getFile() . " - LINE: " . $e->getLine();
+    }
 })->middleware(['auth', 'web']);
