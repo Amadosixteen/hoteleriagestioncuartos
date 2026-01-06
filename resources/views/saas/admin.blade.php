@@ -122,12 +122,23 @@
                             @elseif($user->isSeller())
                                 <span class="text-gray-400 italic text-xs">Acceso Staff</span>
                             @else
-                                <form action="{{ route('saas.renew', $user->id) }}" method="POST" class="inline">
-                                    @csrf
-                                    <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors shadow-sm font-bold text-xs uppercase tracking-widest">
-                                        +30 Días
-                                    </button>
-                                </form>
+                                <div class="flex items-center justify-end gap-2">
+                                    @if($user->subscription_type === 'trial' && $user->hasActiveSubscription())
+                                        <form action="{{ route('saas.cancel-trial', $user->id) }}" method="POST" class="inline">
+                                            @csrf
+                                            <button type="submit" class="px-3 py-2 border border-red-300 text-red-600 rounded-lg hover:bg-red-50 transition-colors shadow-sm font-bold text-[10px] uppercase tracking-wider">
+                                                Quitar Prueba
+                                            </button>
+                                        </form>
+                                    @endif
+                                    
+                                    <form action="{{ route('saas.renew', $user->id) }}" method="POST" class="inline">
+                                        @csrf
+                                        <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors shadow-sm font-bold text-xs uppercase tracking-widest">
+                                            +30 Días
+                                        </button>
+                                    </form>
+                                </div>
                             @endif
                         </td>
                     </tr>

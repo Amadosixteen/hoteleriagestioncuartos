@@ -139,4 +139,23 @@ class SaaSAdminController extends Controller
 
         return back()->with('success', "Suscripción de {$user->name} renovada por 30 días adicionales.");
     }
+
+    /**
+     * Cancel a trial immediately so next renewal starts from current time.
+     */
+    public function cancelTrial($id)
+    {
+        if (!auth()->user()->isSuperAdmin()) {
+            abort(403);
+        }
+
+        $user = User::findOrFail($id);
+        
+        $user->update([
+            'subscription_expires_at' => Carbon::now(),
+            'subscription_type' => 'monthly', // Lo marcamos como mensual (aunque esté en 0 días) para que no sea más trial
+        ]);
+
+        return back()->with('success', "Prueba de {$user->name} finalizada. Ahora puedes renovar sus 30 días exactos.");
+    }
 }

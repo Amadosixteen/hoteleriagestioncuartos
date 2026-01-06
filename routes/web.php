@@ -44,6 +44,7 @@ Route::middleware(['auth', 'tenant'])->group(function () {
         // Rutas de Administración SaaS
         Route::get('/saas-management', [App\Http\Controllers\SaaSAdminController::class, 'index'])->name('saas.admin');
         Route::post('/saas-management/renew/{id}', [App\Http\Controllers\SaaSAdminController::class, 'renew'])->name('saas.renew');
+        Route::post('/saas-management/cancel-trial/{id}', [App\Http\Controllers\SaaSAdminController::class, 'cancelTrial'])->name('saas.cancel-trial');
         Route::post('/saas-management/hotel', [App\Http\Controllers\SaaSAdminController::class, 'storeHotel'])->name('saas.hotel.store');
         Route::post('/saas-management/seller', [App\Http\Controllers\SaaSAdminController::class, 'storeSeller'])->name('saas.seller.store');
     });
