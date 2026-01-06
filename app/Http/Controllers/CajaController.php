@@ -46,14 +46,9 @@ class CajaController extends Controller
         // 2. Line Chart Data (4 sections if month, flat if day)
         $chartData = $this->getChartData($month, $year, $date, $tenantId);
 
-        // 3. Top 5 Cuartos
-        $topRooms = Reservation::query()
+        // 3. Top 5 Cuartos (Using the same filtered query)
+        $topRooms = (clone $query)
             ->select('room_id', DB::raw('count(*) as total'), DB::raw('sum(total_price) as revenue'))
-            ->whereHas('room.floor', function($q) use ($tenantId) {
-                $q->where('tenant_id', $tenantId);
-            })
-            ->whereMonth('check_in_at', $month)
-            ->whereYear('check_in_at', $year)
             ->groupBy('room_id')
             ->orderBy('total', 'desc')
             ->limit(5)

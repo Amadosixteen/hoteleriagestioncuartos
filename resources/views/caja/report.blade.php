@@ -14,7 +14,7 @@
         <div class="bg-[#f97316] rounded-2xl p-6 text-white shadow-xl min-w-[300px] transform hover:scale-105 transition-transform">
             <div class="flex justify-between items-start mb-2">
                 <span class="text-sm font-bold uppercase tracking-wider">TOTAL DE VENTAS</span>
-                <span class="bg-white/20 px-2 py-0.5 rounded text-[10px] font-black">1</span>
+                <span class="bg-white/20 px-2 py-0.5 rounded text-[10px] font-black" x-text="stats.reservations_count"></span>
             </div>
             <div class="flex items-center space-x-4">
                 <div class="p-3 bg-white/20 rounded-xl">
