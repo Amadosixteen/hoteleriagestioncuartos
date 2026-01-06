@@ -22,12 +22,12 @@ trait HasTenantSetup
             
             // Create 10 rooms for this floor
             for ($roomNumber = 1; $roomNumber <= 10; $roomNumber++) {
-                // Room numbers like 101, 102... or 1, 2, 3...
-                // The prompt says "10 cuartos en cada una, enumeralas en orden"
-                // I'll keep them as 1, 2, 3... per floor for now
+                // Numbering scheme: 101-110, 201-210, 301-310
+                $calculatedRoomNumber = ($floorNumber * 100) + $roomNumber;
+                
                 Room::create([
                     'floor_id' => $floor->id,
-                    'room_number' => $roomNumber,
+                    'room_number' => $calculatedRoomNumber,
                     'status' => 'available',
                 ]);
             }
