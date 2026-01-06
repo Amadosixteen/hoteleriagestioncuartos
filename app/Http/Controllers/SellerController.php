@@ -38,19 +38,26 @@ class SellerController extends Controller
         $seller = $user->seller;
 
         if ($user->isSuperAdmin()) {
-            // 1. Clientes Directos (Total histórico)
-            $tenants = Tenant::with(['users'])->whereNull('seller_id')->get();
+            // 1. Clientes Directos (Excluyéndose a sí mismo)
+            $tenants = Tenant::with(['users'])
+                ->whereNull('seller_id')
+                ->whereHas('users', function($q) {
+                    $q->where('email', '!=', 'amadocahuazavargas@gmail.com');
+                })
+                ->get();
             $totalClients = $tenants->count();
 
             // 2. Suscripciones Activas
-            // A. Directas
+            // A. Directas (Excluyendo Super Admin)
             $activeDirectCount = User::where('is_active', true)
+                ->where('email', '!=', 'amadocahuazavargas@gmail.com')
                 ->whereHas('tenant', function($q) { 
                     $q->whereNull('seller_id'); 
                 })->count();
 
             // B. De Vendedores
             $activeSellerCount = User::where('is_active', true)
+                ->where('email', '!=', 'amadocahuazavargas@gmail.com')
                 ->whereHas('tenant', function($q) { 
                     $q->whereNotNull('seller_id'); 
                 })->count();
