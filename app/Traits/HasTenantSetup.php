@@ -29,6 +29,7 @@ trait HasTenantSetup
                     'floor_id' => $floor->id,
                     'room_number' => $calculatedRoomNumber,
                     'status' => 'available',
+                    'position' => $roomNumber, // Initialize position for sorting
                 ]);
             }
         }

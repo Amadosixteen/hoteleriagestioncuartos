@@ -15,7 +15,7 @@ class DashboardController extends Controller
         $floors = Floor::where('tenant_id', auth()->user()->tenant_id)
             ->with([
                 'rooms' => function ($query) {
-                    $query->orderBy('room_number', 'asc');
+                    $query->orderBy('position', 'asc');
                 },
                 'rooms.activeReservation.guests',
                 'rooms.activeReservation' => function ($query) {
