@@ -24,6 +24,7 @@
                         @endif
                         <a href="{{ route('analytics.index') }}" class="text-sm font-medium text-gray-700 hover:text-gray-900">Analíticas</a>
                         <a href="{{ route('calendar.index') }}" class="text-sm font-medium text-gray-700 hover:text-gray-900">Calendario</a>
+                        <a href="{{ route('caja.report') }}" class="text-sm font-medium text-gray-700 hover:text-gray-900 {{ request()->routeIs('caja.report') ? 'text-blue-600 font-bold' : '' }}">Caja</a>
                         <a href="{{ route('floors.index') }}" class="text-sm font-medium text-gray-700 hover:text-gray-900">Pisos</a>
                         <a href="{{ route('rooms.index') }}" class="text-sm font-medium text-gray-700 hover:text-gray-900 {{ request()->routeIs('rooms.*') ? 'text-blue-600' : '' }}">Habitaciones</a>
                         <a href="{{ route('rates.index') }}" class="text-sm font-medium text-gray-700 hover:text-gray-900 {{ request()->routeIs('rates.*') ? 'text-blue-600' : '' }}">Tarifas</a>
@@ -119,6 +120,7 @@
                 @endif
                 <a href="{{ route('analytics.index') }}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-50">Analíticas</a>
                 <a href="{{ route('calendar.index') }}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-50">Calendario</a>
+                <a href="{{ route('caja.report') }}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-50 {{ request()->routeIs('caja.report') ? 'text-blue-600 font-bold' : '' }}">Caja</a>
                 <a href="{{ route('floors.index') }}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-50">Pisos</a>
                 <a href="{{ route('rooms.index') }}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-50">Habitaciones</a>
                 <a href="{{ route('rates.index') }}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-50">Tarifas</a>

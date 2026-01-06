@@ -32,6 +32,9 @@ Route::middleware(['auth', 'tenant'])->group(function () {
     Route::post('/rates/update', [App\Http\Controllers\RateController::class, 'update'])->name('rates.update');
     Route::post('/rooms/reorder', [App\Http\Controllers\RoomController::class, 'reorder'])->name('rooms.reorder');
 
+    Route::get('/caja/report', [App\Http\Controllers\CajaController::class, 'report'])->name('caja.report');
+    Route::get('/caja/data', [App\Http\Controllers\CajaController::class, 'data'])->name('caja.data');
+
     Route::get('/analytics', [App\Http\Controllers\AnalyticsController::class, 'index'])->name('analytics.index');
     Route::get('/calendar', [App\Http\Controllers\CalendarController::class, 'index'])->name('calendar.index');
 
