@@ -45,6 +45,7 @@ class SaaSAdminController extends Controller
         $request->validate([
             'hotel_name' => 'required|string|max:255',
             'phone' => 'nullable|string|max:20',
+            'location' => 'nullable|string|max:500',
             'email' => 'required|email|ends_with:@gmail.com|unique:users,email',
             'subscription_type' => 'required|in:trial,monthly',
             'seller_id' => 'nullable|exists:sellers,id',
@@ -54,6 +55,7 @@ class SaaSAdminController extends Controller
         $tenant = Tenant::create([
             'name' => $request->hotel_name . "'s Hotel",
             'phone' => $request->phone,
+            'location' => $request->location,
             'slug' => Str::slug($request->email),
             'seller_id' => $request->seller_id,
             'registration_date' => Carbon::now(),
