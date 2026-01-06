@@ -50,3 +50,23 @@ Route::middleware(['auth', 'tenant'])->group(function () {
     
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 });
+// Temporary Reset Route
+Route::get('/saas/secret-db-reset', function () {
+    if (!auth()->check() || !auth()->user()->isSuperAdmin()) {
+        abort(403);
+    }
+    
+    // Cleanup Logic
+    \App\Models\Reservation::truncate();
+    \App\Models\Guest::truncate();
+    
+    // Rooms and Floors delete via cascade from Tenant
+    \App\Models\Tenant::query()->delete(); 
+    
+    // Delete all users except Super Admin
+    \App\Models\User::where('email', '!=', 'amadocahuazavargas@gmail.com')->delete();
+    
+    \App\Models\Seller::query()->delete();
+    
+    return "Base de datos de producción reiniciada exitosamente. Todas las habitaciones, reservas, vendedores y usuarios (excepto tú) han sido eliminados.";
+})->middleware(['auth', 'web']);
