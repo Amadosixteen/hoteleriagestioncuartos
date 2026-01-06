@@ -251,6 +251,11 @@
                                 <input type="text" name="dni" required maxlength="8" class="mt-1 block w-full rounded-xl border-gray-200 bg-gray-50 focus:border-blue-500 focus:ring-blue-500" placeholder="8 dígitos">
                             </div>
                             <div>
+                                <label class="block text-sm font-bold text-gray-700">Email (Gmail)</label>
+                                <input type="email" name="email" required pattern=".+@gmail\.com" placeholder="ejemplo@gmail.com" class="mt-1 block w-full rounded-xl border-gray-200 bg-gray-50 focus:border-blue-500 focus:ring-blue-500">
+                                <p class="text-[10px] text-gray-400 mt-1">Se creará una cuenta de acceso para este vendedor.</p>
+                            </div>
+                            <div>
                                 <label class="block text-sm font-bold text-gray-700">Nombres</label>
                                 <input type="text" name="names" required class="mt-1 block w-full rounded-xl border-gray-200 bg-gray-50 focus:border-blue-500 focus:ring-blue-500">
                             </div>

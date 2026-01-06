@@ -33,6 +33,9 @@ Route::middleware(['auth', 'tenant'])->group(function () {
     Route::get('/analytics', [App\Http\Controllers\AnalyticsController::class, 'index'])->name('analytics.index');
     Route::get('/calendar', [App\Http\Controllers\CalendarController::class, 'index'])->name('calendar.index');
 
+    // Route for Sellers
+    Route::get('/seller/dashboard', [App\Http\Controllers\SellerController::class, 'index'])->name('seller.dashboard');
+
     // Management Routes (Solo Super Admin)
     Route::middleware(['superadmin'])->group(function () {
         Route::get('/hotels', [App\Http\Controllers\HotelController::class, 'index'])->name('hotels.index');

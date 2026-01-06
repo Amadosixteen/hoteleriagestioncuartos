@@ -12,6 +12,7 @@ class Seller extends Model
         'dni',
         'names',
         'surnames',
+        'email',
     ];
 
     /**

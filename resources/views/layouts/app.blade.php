@@ -26,6 +26,13 @@
                         <a href="{{ route('calendar.index') }}" class="text-sm font-medium text-gray-700 hover:text-gray-900">Calendario</a>
                         <a href="{{ route('floors.index') }}" class="text-sm font-medium text-gray-700 hover:text-gray-900">Pisos</a>
                         <a href="{{ route('rooms.index') }}" class="text-sm font-medium text-gray-700 hover:text-gray-900">Habitaciones</a>
+                        
+                        @if(auth()->user()->isSeller())
+                        <a href="{{ route('seller.dashboard') }}" class="px-3 py-1 bg-green-100 text-green-700 rounded-lg text-xs font-bold hover:bg-green-200 transition-colors flex items-center space-x-1">
+                            <span>Panel Vendedor</span>
+                        </a>
+                        @endif
+
                         @if(auth()->user()->isSuperAdmin())
                         <a href="{{ route('saas.admin') }}" class="px-3 py-1 bg-indigo-100 text-indigo-700 rounded-lg text-xs font-bold hover:bg-indigo-200 transition-colors flex items-center space-x-1">
                             <span>Panel SaaS</span>
@@ -112,6 +119,10 @@
                 <a href="{{ route('floors.index') }}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-50">Pisos</a>
                 <a href="{{ route('rooms.index') }}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-50">Habitaciones</a>
                 
+                @if(auth()->user()->isSeller())
+                <a href="{{ route('seller.dashboard') }}" class="block px-3 py-2 rounded-md text-base font-bold bg-green-50 text-green-700 hover:bg-green-100">Panel Vendedor</a>
+                @endif
+
                 @if(auth()->user()->isSuperAdmin())
                 <a href="{{ route('saas.admin') }}" class="block px-3 py-2 rounded-md text-base font-bold bg-indigo-50 text-indigo-700 hover:bg-indigo-100">Panel Gestión SaaS</a>
                 @endif

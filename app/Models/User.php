@@ -27,6 +27,7 @@ class User extends Authenticatable
         'is_admin',
         'subscription_expires_at',
         'subscription_type',
+        'seller_id',
     ];
 
     /**
@@ -116,6 +117,14 @@ class User extends Authenticatable
     }
 
     /**
+     * Get the seller profile for this user (if they are a seller).
+     */
+    public function seller()
+    {
+        return $this->belongsTo(Seller::class);
+    }
+
+    /**
      * Check if the user is the SaaS super admin.
      */
     public function isSuperAdmin(): bool
@@ -129,5 +138,13 @@ class User extends Authenticatable
     public function isAdmin(): bool
     {
         return (bool) $this->is_admin;
+    }
+
+    /**
+     * Check if the user is a seller.
+     */
+    public function isSeller(): bool
+    {
+        return !is_null($this->seller_id);
     }
 }

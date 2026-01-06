@@ -97,11 +97,22 @@ class SaaSAdminController extends Controller
             'dni' => 'required|string|unique:sellers,dni',
             'names' => 'required|string|max:255',
             'surnames' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email|ends_with:@gmail.com',
         ]);
 
-        Seller::create($request->only('dni', 'names', 'surnames'));
+        $seller = Seller::create($request->only('dni', 'names', 'surnames', 'email'));
 
-        return back()->with('success', "Vendedor registrado correctamente.");
+        // Crear usuario para el vendedor
+        User::create([
+            'name' => $seller->full_name,
+            'email' => $request->email,
+            'password' => null, // Google Auth
+            'is_active' => true,
+            'seller_id' => $seller->id,
+            // No tiene tenant_id, ni suscripción (es staff)
+        ]);
+
+        return back()->with('success', "Vendedor registrado correctamente. Ahora puede iniciar sesión con su correo Google.");
     }
 
     /**
