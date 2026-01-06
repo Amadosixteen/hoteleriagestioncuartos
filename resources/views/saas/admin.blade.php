@@ -125,8 +125,22 @@
     <!-- Analítica de Vendedores -->
     <div class="bg-white shadow-xl rounded-2xl overflow-hidden border border-gray-100">
         <div class="px-6 py-5 border-b border-gray-200 bg-gray-900">
-            <h3 class="text-xl font-bold text-white">Analítica de Vendedores</h3>
-            <p class="text-gray-400 text-sm">Comisiones (40% de 35.90) de hoteles activos.</p>
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center">
+                <div>
+                    <h3 class="text-xl font-bold text-white">Analítica de Vendedores</h3>
+                    <p class="text-gray-400 text-sm">Comisiones (40% de 35.90) de hoteles activos.</p>
+                </div>
+                <!-- Cálculo del Total General -->
+                @php
+                    $totalCommissions = $sellers->sum(function($seller) {
+                        return $seller->active_commissions;
+                    });
+                @endphp
+                <div class="mt-4 sm:mt-0 bg-gray-800 rounded-xl px-4 py-2 border border-gray-700">
+                    <span class="text-gray-400 text-xs font-medium uppercase tracking-wider block">Total a Pagar</span>
+                    <span class="text-2xl font-black text-green-400">S/ {{ number_format($totalCommissions, 2) }}</span>
+                </div>
+            </div>
         </div>
         <div class="p-6">
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
