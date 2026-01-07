@@ -80,13 +80,13 @@
         <!-- Main Content -->
         <div class="lg:col-span-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             <!-- Line Chart Section -->
-            <div class="lg:col-span-2 bg-white rounded-3xl p-8 shadow-sm border border-gray-50 flex flex-col min-h-[500px]">
+            <div class="lg:col-span-2 bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-gray-50 flex flex-col min-h-[400px] md:h-[450px]">
                 <div class="text-center mb-6">
                     <h3 class="text-xs font-black text-gray-400 uppercase tracking-[0.2em] flex items-center justify-center">
-                        PROGRESO DE VENTAS
+                        VENTAS DURANTE EL PERIODO
                         <span class="ml-2">📈</span>
                     </h3>
-                    <div class="text-6xl font-black text-[#1e3a8a] my-2 tabular-nums" x-text="stats.reservations_count">0</div>
+                    <div class="text-5xl md:text-6xl font-black text-[#1e3a8a] my-2 tabular-nums" x-text="stats.reservations_count">0</div>
                     <p class="text-[10px] font-bold text-gray-400 uppercase" x-text="stats.period_label">---</p>
                 </div>
                 
@@ -96,17 +96,17 @@
             </div>
 
             <!-- Top 5 List -->
-            <div class="bg-white rounded-3xl p-8 shadow-sm border border-gray-50">
-                <h3 class="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-8 border-b border-gray-50 pb-4 text-center">Top 5 Cuartos</h3>
+            <div class="bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-gray-50 flex flex-col">
+                <h3 class="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-6 border-b border-gray-50 pb-4 text-center">Top 5 Cuartos</h3>
                 
-                <div class="space-y-6">
+                <div class="space-y-3 md:space-y-4 flex-1 overflow-auto">
                     <template x-for="room in stats.top_rooms" :key="room.number">
-                        <div class="flex items-center justify-between group bg-gray-50/50 p-4 rounded-2xl hover:bg-gray-50 transition-colors">
-                            <div class="flex items-center space-x-4">
-                                <div class="w-10 h-10 bg-[#1e40af] text-white rounded-xl flex items-center justify-center font-black text-lg shadow-sm" x-text="room.number"></div>
-                                <span class="text-xs font-black text-gray-400 uppercase tracking-tighter">Habitación</span>
+                        <div class="flex items-center justify-between group bg-gray-50/50 p-3 md:p-4 rounded-2xl hover:bg-gray-50 transition-colors">
+                            <div class="flex items-center space-x-3 md:space-x-4">
+                                <div class="w-8 h-8 md:w-10 md:h-10 bg-[#1e40af] text-white rounded-xl flex items-center justify-center font-black text-sm md:text-lg shadow-sm" x-text="room.number"></div>
+                                <span class="text-[10px] font-black text-gray-400 uppercase tracking-tighter">Hab.</span>
                             </div>
-                            <span class="text-xl font-black text-gray-800 tabular-nums" x-text="formatValue(room.price)"></span>
+                            <span class="text-lg md:text-xl font-black text-gray-800 tabular-nums" x-text="formatValue(room.price)"></span>
                         </div>
                     </template>
                 </div>
