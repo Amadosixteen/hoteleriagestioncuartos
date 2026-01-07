@@ -160,7 +160,8 @@
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/es.js"></script>
 
-<script>
+let _cajaChart = null; // Non-reactive persistent reference
+
 function cajaReport() {
     return {
         isLoading: false,
@@ -174,9 +175,6 @@ function cajaReport() {
             top_rooms: [],
             sales_by_category: [],
             reservations_count: 0
-        },
-        charts: {
-            sales: null
         },
 
         async init() {
@@ -194,8 +192,8 @@ function cajaReport() {
             });
 
             window.addEventListener('resize', () => {
-                if (this.charts.sales) {
-                    this.charts.sales.resize();
+                if (_cajaChart) {
+                    _cajaChart.resize();
                 }
             });
 
@@ -254,9 +252,9 @@ function cajaReport() {
             const canvas = document.getElementById('salesLineChart');
             if (!canvas) return;
 
-            // Wait for library and dimensions
+            // Wait for library and stable layout (Increased for mobile)
             if (typeof Chart === 'undefined' || canvas.offsetWidth === 0) {
-                if (retry < 20) { // More retries for mobile
+                if (retry < 25) { 
                     setTimeout(() => this.renderCharts(retry + 1), 200);
                 }
                 return;
@@ -265,9 +263,10 @@ function cajaReport() {
             const ctx = canvas.getContext('2d');
             if (!ctx) return;
             
-            // Clean up and prevent duplicate renders
-            if (this.charts.sales) {
-                this.charts.sales.destroy();
+            // Cleanup existing chart
+            if (_cajaChart) {
+                _cajaChart.destroy();
+                _cajaChart = null;
             }
 
             if (!this.stats.chart_data || !this.stats.chart_data.values || this.stats.chart_data.values.length === 0) {
@@ -279,48 +278,51 @@ function cajaReport() {
                 return this.currency === 'Dólares' ? (val / this.exchangeRate) : val;
             });
 
-            // Double frame wait for mobile stability
+            // Triple-safe frame wait to ensure mobile layout is finalized
             requestAnimationFrame(() => {
                 requestAnimationFrame(() => {
-                    try {
-                        this.charts.sales = new Chart(ctx, {
-                            type: 'line',
-                            data: {
-                                labels: this.stats.chart_data.labels || [],
-                                datasets: [{
-                                    label: 'Ventas (' + (this.currency === 'Soles' ? 'S/' : '$') + ')',
-                                    data: finalValues,
-                                    borderColor: '#2563eb',
-                                    backgroundColor: 'rgba(37, 99, 235, 0.1)',
-                                    borderWidth: 3,
-                                    pointBackgroundColor: '#ffffff',
-                                    pointBorderColor: '#2563eb',
-                                    pointBorderWidth: 2,
-                                    pointRadius: 4,
-                                    tension: 0.3,
-                                    fill: true,
-                                    spanGaps: true
-                                }]
-                            },
-                            options: {
-                                responsive: true,
-                                maintainAspectRatio: false,
-                                devicePixelRatio: window.devicePixelRatio || 2,
-                                plugins: { legend: { display: false } },
-                                scales: {
-                                    y: {
-                                        beginAtZero: true,
-                                        grid: { color: '#f3f4f6' },
-                                        ticks: { 
-                                            callback: (val) => (this.currency === 'Soles' ? 'S/ ' : '$ ') + val 
+                    setTimeout(() => {
+                        try {
+                            _cajaChart = new Chart(ctx, {
+                                type: 'line',
+                                data: {
+                                    labels: this.stats.chart_data.labels || [],
+                                    datasets: [{
+                                        label: 'Ventas (' + (this.currency === 'Soles' ? 'S/' : '$') + ')',
+                                        data: finalValues,
+                                        borderColor: '#2563eb',
+                                        backgroundColor: 'rgba(37, 99, 235, 0.1)',
+                                        borderWidth: 3,
+                                        pointBackgroundColor: '#ffffff',
+                                        pointBorderColor: '#2563eb',
+                                        pointBorderWidth: 2,
+                                        pointRadius: 4,
+                                        tension: 0.3,
+                                        fill: true,
+                                        spanGaps: true
+                                    }]
+                                },
+                                options: {
+                                    responsive: true,
+                                    maintainAspectRatio: false,
+                                    devicePixelRatio: window.devicePixelRatio || 2,
+                                    animation: { duration: 400 },
+                                    plugins: { legend: { display: false } },
+                                    scales: {
+                                        y: {
+                                            beginAtZero: true,
+                                            grid: { color: '#f3f4f6' },
+                                            ticks: { 
+                                                callback: (val) => (this.currency === 'Soles' ? 'S/ ' : '$ ') + val 
+                                            }
                                         }
                                     }
                                 }
-                            }
-                        });
-                    } catch (err) {
-                        console.error("Chart draw error:", err);
-                    }
+                            });
+                        } catch (err) {
+                            console.error("Chart failure:", err);
+                        }
+                    }, 100); // Buffer for mobile layout stability
                 });
             });
         }
