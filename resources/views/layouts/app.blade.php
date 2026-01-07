@@ -26,9 +26,26 @@
                         <a href="{{ route('analytics.index') }}" class="text-sm font-medium text-gray-700 hover:text-gray-900">Analíticas</a>
                         <a href="{{ route('calendar.index') }}" class="text-sm font-medium text-gray-700 hover:text-gray-900">Calendario</a>
                         <a href="{{ route('caja.report') }}" class="text-sm font-medium text-gray-700 hover:text-gray-900 {{ request()->routeIs('caja.report') ? 'text-blue-600 font-bold' : '' }}">Caja</a>
-                        <a href="{{ route('floors.index') }}" class="text-sm font-medium text-gray-700 hover:text-gray-900">Pisos</a>
-                        <a href="{{ route('rooms.index') }}" class="text-sm font-medium text-gray-700 hover:text-gray-900 {{ request()->routeIs('rooms.*') ? 'text-blue-600' : '' }}">Habitaciones</a>
-                        <a href="{{ route('rates.index') }}" class="text-sm font-medium text-gray-700 hover:text-gray-900 {{ request()->routeIs('rates.*') ? 'text-blue-600' : '' }}">Tarifas</a>
+                        <!-- Menú Configurar (Desktop) -->
+                        <div class="relative" x-data="{ openConfig: false }">
+                            <button @click="openConfig = !openConfig" 
+                                    class="text-sm font-medium text-gray-700 hover:text-gray-900 flex items-center space-x-1 {{ request()->routeIs(['floors.*', 'rooms.*', 'rates.*']) ? 'text-blue-600 font-bold' : '' }}">
+                                <span>Configurar</span>
+                                <svg class="w-4 h-4 transition-transform" :class="openConfig ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                </svg>
+                            </button>
+                            <div x-show="openConfig" 
+                                 @click.away="openConfig = false"
+                                 x-transition:enter="transition ease-out duration-100"
+                                 x-transition:enter-start="opacity-0 scale-95"
+                                 x-transition:enter-end="opacity-100 scale-100"
+                                 class="absolute left-0 mt-2 w-48 bg-white border border-gray-100 rounded-xl shadow-lg z-50 py-2">
+                                <a href="{{ route('floors.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 {{ request()->routeIs('floors.*') ? 'text-blue-600 font-bold' : '' }}">Pisos</a>
+                                <a href="{{ route('rooms.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 {{ request()->routeIs('rooms.*') ? 'text-blue-600 font-bold' : '' }}">Habitaciones</a>
+                                <a href="{{ route('rates.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 {{ request()->routeIs('rates.*') ? 'text-blue-600 font-bold' : '' }}">Tarifas</a>
+                            </div>
+                        </div>
                         
                         @if(auth()->user()->isSeller() || auth()->user()->isSuperAdmin())
                         <a href="{{ route('seller.dashboard') }}" class="px-3 py-1 bg-green-100 text-green-700 rounded-lg text-xs font-bold hover:bg-green-200 transition-colors flex items-center space-x-1">
@@ -122,9 +139,21 @@
                 <a href="{{ route('analytics.index') }}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-50">Analíticas</a>
                 <a href="{{ route('calendar.index') }}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-50">Calendario</a>
                 <a href="{{ route('caja.report') }}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-50 {{ request()->routeIs('caja.report') ? 'text-blue-600 font-bold' : '' }}">Caja</a>
-                <a href="{{ route('floors.index') }}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-50">Pisos</a>
-                <a href="{{ route('rooms.index') }}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-50">Habitaciones</a>
-                <a href="{{ route('rates.index') }}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-50">Tarifas</a>
+                <!-- Sección Configurar (Móvil) -->
+                <div x-data="{ openConfig: {{ request()->routeIs(['floors.*', 'rooms.*', 'rates.*']) ? 'true' : 'false' }} }">
+                    <button @click="openConfig = !openConfig" 
+                            class="w-full flex justify-between items-center px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-50 {{ request()->routeIs(['floors.*', 'rooms.*', 'rates.*']) ? 'bg-gray-50 text-blue-600' : '' }}">
+                        <span>Configurar</span>
+                        <svg class="w-5 h-5 transition-transform" :class="openConfig ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                        </svg>
+                    </button>
+                    <div x-show="openConfig" class="pl-4 space-y-1 mt-1 border-l-2 border-gray-100 ml-3" x-transition>
+                        <a href="{{ route('floors.index') }}" class="block px-3 py-2 rounded-md text-sm font-medium text-gray-600 hover:bg-gray-50 {{ request()->routeIs('floors.*') ? 'text-blue-600 font-bold' : '' }}">Pisos</a>
+                        <a href="{{ route('rooms.index') }}" class="block px-3 py-2 rounded-md text-sm font-medium text-gray-600 hover:bg-gray-50 {{ request()->routeIs('rooms.*') ? 'text-blue-600 font-bold' : '' }}">Habitaciones</a>
+                        <a href="{{ route('rates.index') }}" class="block px-3 py-2 rounded-md text-sm font-medium text-gray-600 hover:bg-gray-50 {{ request()->routeIs('rates.*') ? 'text-blue-600 font-bold' : '' }}">Tarifas</a>
+                    </div>
+                </div>
                 
                 @if(auth()->user()->isSeller())
                 <a href="{{ route('seller.dashboard') }}" class="block px-3 py-2 rounded-md text-base font-bold bg-green-50 text-green-700 hover:bg-green-100">Panel Vendedor</a>
