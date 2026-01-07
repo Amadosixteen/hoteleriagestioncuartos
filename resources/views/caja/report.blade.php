@@ -324,7 +324,23 @@ function cajaReport() {
                         maintainAspectRatio: false,
                         animation: { duration: 800 },
                         devicePixelRatio: window.devicePixelRatio || 2,
-                        plugins: { legend: { display: false } },
+                        plugins: { 
+                            legend: { display: false },
+                            tooltip: {
+                                backgroundColor: 'rgba(30, 58, 138, 0.9)', // Dark blue matching theme
+                                titleFont: { size: 14, weight: 'bold' },
+                                bodyFont: { size: 16, weight: 'black' },
+                                padding: 12,
+                                cornerRadius: 10,
+                                displayColors: false,
+                                callbacks: {
+                                    label: (ctx) => {
+                                        let val = ctx.parsed.y;
+                                        return (this.currency === 'Soles' ? 'S/ ' : '$ ') + val.toLocaleString('en-US', { minimumFractionDigits: 2 });
+                                    }
+                                }
+                            }
+                        },
                         scales: {
                             y: { 
                                 beginAtZero: true, 
