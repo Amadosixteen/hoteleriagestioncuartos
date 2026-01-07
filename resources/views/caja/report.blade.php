@@ -86,8 +86,8 @@
                     <div class="text-6xl font-black text-[#1e3a8a] my-4" x-text="stats.reservations_count">0</div>
                 </div>
                 
-                <div class="w-full h-[350px] relative overflow-hidden">
-                    <canvas id="salesLineChart"></canvas>
+                <div class="w-full h-[320px] relative bg-white" x-ignore>
+                    <canvas id="salesLineChart" style="display: block; width: 100%; height: 100%;"></canvas>
                 </div>
                 
                 <div class="mt-4 text-2xl font-black text-gray-800 uppercase tracking-widest" x-text="stats.period_label">ENERO</div>
@@ -221,8 +221,10 @@ function cajaReport() {
                 const data = await response.json();
                 
                 this.stats = data;
-                // Use setTimeout to ensure DOM is ready on mobile before drawing
-                setTimeout(() => this.renderCharts(), 100);
+                // Wait for Alpine to settle then draw
+                this.$nextTick(() => {
+                    setTimeout(() => this.renderCharts(), 150);
+                });
             } catch (error) {
                 console.error("Error fetching data:", error);
             } finally {
@@ -248,9 +250,15 @@ function cajaReport() {
             this.renderCharts(); // Re-render chart with new values
         },
 
-        renderCharts() {
+        renderCharts(retry = 0) {
             const canvas = document.getElementById('salesLineChart');
             if (!canvas) return;
+
+            // Robustness: wait if the canvas has no dimensions yet (common on mobile)
+            if (canvas.offsetWidth === 0 && retry < 3) {
+                setTimeout(() => this.renderCharts(retry + 1), 150);
+                return;
+            }
 
             const ctx = canvas.getContext('2d');
             
@@ -289,12 +297,22 @@ function cajaReport() {
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    devicePixelRatio: window.devicePixelRatio || 1,
                     animation: {
                         duration: 800
                     },
+                    interaction: {
+                        intersect: false,
+                        mode: 'index',
+                    },
                     plugins: {
-                        legend: { display: false }
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: 'rgba(30, 58, 138, 0.9)',
+                            titleFont: { weight: 'bold' },
+                            padding: 12,
+                            cornerRadius: 10,
+                            displayColors: false
+                        }
                     },
                     scales: {
                         y: {
