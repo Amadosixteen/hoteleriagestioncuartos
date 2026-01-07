@@ -74,7 +74,7 @@ class CajaController extends Controller
             'top_rooms' => $topRooms->map(function($tr) {
                 return [
                     'number' => $tr->room->room_number,
-                    'price' => $tr->total > 0 ? ($tr->revenue / $tr->total) : 0, // Raw avg price
+                    'price' => $tr->revenue, // Accumulated revenue for the room
                 ];
             }),
             'sales_by_category' => $salesByCategory,
