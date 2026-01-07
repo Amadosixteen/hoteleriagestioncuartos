@@ -70,13 +70,13 @@ class CajaController extends Controller
         }
 
         return response()->json([
-            'total_sales' => number_format($totalSales, 2, '.', ','),
+            'total_sales' => $totalSales,
             'period_label' => strtoupper($periodLabel),
             'chart_data' => $chartData,
             'top_rooms' => $topRooms->map(function($tr) {
                 return [
                     'number' => $tr->room->room_number,
-                    'price' => number_format($tr->revenue / $tr->total, 2, '.', ','), // Average price sold
+                    'price' => $tr->total > 0 ? ($tr->revenue / $tr->total) : 0, // Raw avg price
                 ];
             }),
             'sales_by_category' => $salesByCategory,

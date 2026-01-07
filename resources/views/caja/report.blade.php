@@ -22,7 +22,7 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
                     </svg>
                 </div>
-                <span class="text-3xl font-black tracking-tighter" x-text="currency === 'Soles' ? 'S/ ' + stats.total_sales : '$ ' + stats.total_sales"></span>
+                <span class="text-3xl font-black tracking-tighter" x-text="getFormattedTotal()"></span>
             </div>
         </div>
     </div>
@@ -33,12 +33,12 @@
             <div>
                 <label class="block text-sm font-black text-gray-500 uppercase tracking-widest mb-3">Tipo</label>
                 <div class="flex space-x-2">
-                    <button @click="currency = 'Dólares'" 
+                    <button @click="toggleCurrency('Dólares')" 
                             :class="currency === 'Dólares' ? 'bg-[#15803d] text-white' : 'bg-gray-100 text-gray-400'"
                             class="px-4 py-2 rounded-lg text-xs font-black uppercase transition-all shadow-sm">
                         Dólares
                     </button>
-                    <button @click="currency = 'Soles'" 
+                    <button @click="toggleCurrency('Soles')" 
                             :class="currency === 'Soles' ? 'bg-[#eab308] text-white' : 'bg-gray-100 text-gray-400'"
                             class="px-4 py-2 rounded-lg text-xs font-black uppercase transition-all shadow-sm">
                         Soles
@@ -86,7 +86,7 @@
                     <div class="text-6xl font-black text-[#1e3a8a] my-4" x-text="stats.reservations_count">0</div>
                 </div>
                 
-                <div class="w-full h-64">
+                <div class="w-full h-64 relative overflow-hidden">
                     <canvas id="salesLineChart"></canvas>
                 </div>
                 
@@ -101,7 +101,7 @@
                     <template x-for="room in stats.top_rooms" :key="room.number">
                         <div class="flex items-center justify-between group">
                             <span class="text-2xl font-black text-[#1e3a8a] group-hover:text-blue-600 transition-colors" x-text="room.number"></span>
-                            <span class="text-xl font-black text-gray-800" x-text="(currency === 'Soles' ? 'S/ ' : '$ ') + room.price"></span>
+                            <span class="text-xl font-black text-gray-800" x-text="formatValue(room.price)"></span>
                         </div>
                     </template>
                 </div>
@@ -166,9 +166,10 @@ function cajaReport() {
     return {
         isLoading: false,
         currency: 'Soles',
+        exchangeRate: 3.85,
         currentMonth: new Date().getMonth() + 1,
         stats: {
-            total_sales: '0.00',
+            total_sales: 0,
             period_label: '',
             chart_data: { labels: [], values: [] },
             top_rooms: [],
@@ -222,6 +223,24 @@ function cajaReport() {
             }
         },
 
+        formatValue(val) {
+            let value = parseFloat(val);
+            if (this.currency === 'Dólares') {
+                value = value / this.exchangeRate;
+                return '$ ' + value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            }
+            return 'S/ ' + value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        },
+
+        getFormattedTotal() {
+            return this.formatValue(this.stats.total_sales);
+        },
+
+        toggleCurrency(newCurrency) {
+            this.currency = newCurrency;
+            this.renderCharts(); // Re-render chart with new values
+        },
+
         renderCharts() {
             const ctx = document.getElementById('salesLineChart').getContext('2d');
             
@@ -229,13 +248,18 @@ function cajaReport() {
                 this.charts.sales.destroy();
             }
 
+            const chartValues = this.stats.chart_data.values.map(v => {
+                let val = parseFloat(v);
+                return this.currency === 'Dólares' ? (val / this.exchangeRate) : val;
+            });
+            
             this.charts.sales = new Chart(ctx, {
                 type: 'line',
                 data: {
                     labels: this.stats.chart_data.labels,
                     datasets: [{
-                        label: 'Ventas',
-                        data: this.stats.chart_data.values,
+                        label: 'Ventas (' + (this.currency === 'Soles' ? 'S/' : '$') + ')',
+                        data: chartValues,
                         borderColor: '#2563eb',
                         backgroundColor: '#2563eb20',
                         borderWidth: 4,
