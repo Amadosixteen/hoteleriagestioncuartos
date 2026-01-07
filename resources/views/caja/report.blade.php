@@ -183,6 +183,7 @@ function cajaReport() {
             const picker = flatpickr("#hidden-date-picker", {
                 locale: 'es',
                 dateFormat: "Y-m-d",
+                disableMobile: true,
                 onChange: (selectedDates, dateStr) => {
                     this.fetchData({ date: dateStr });
                 }
