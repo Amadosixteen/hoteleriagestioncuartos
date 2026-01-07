@@ -242,21 +242,27 @@ function cajaReport() {
         },
 
         renderCharts() {
-            const ctx = document.getElementById('salesLineChart').getContext('2d');
+            const canvas = document.getElementById('salesLineChart');
+            if (!canvas) return;
+
+            const ctx = canvas.getContext('2d');
             
             if (this.charts.sales) {
                 this.charts.sales.destroy();
+                this.charts.sales = null;
             }
 
+            if (!this.stats.chart_data || !this.stats.chart_data.values) return;
+
             const chartValues = this.stats.chart_data.values.map(v => {
-                let val = parseFloat(v);
+                let val = parseFloat(v || 0);
                 return this.currency === 'Dólares' ? (val / this.exchangeRate) : val;
             });
             
             this.charts.sales = new Chart(ctx, {
                 type: 'line',
                 data: {
-                    labels: this.stats.chart_data.labels,
+                    labels: this.stats.chart_data.labels || [],
                     datasets: [{
                         label: 'Ventas (' + (this.currency === 'Soles' ? 'S/' : '$') + ')',
                         data: chartValues,
@@ -275,6 +281,9 @@ function cajaReport() {
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
+                    animation: {
+                        duration: 800
+                    },
                     plugins: {
                         legend: { display: false }
                     },
@@ -282,7 +291,10 @@ function cajaReport() {
                         y: {
                             beginAtZero: true,
                             grid: { color: '#f3f4f6' },
-                            ticks: { font: { weight: 'bold' } }
+                            ticks: { 
+                                font: { weight: 'bold' },
+                                callback: (value) => (this.currency === 'Soles' ? 'S/ ' : '$ ') + value
+                            }
                         },
                         x: {
                             grid: { display: false },
