@@ -62,6 +62,7 @@ class ReservationController extends Controller
                 'price' => $room->price,
                 'total_price' => $room->price,
                 'status' => 'active',
+                'tenant_id' => $room->floor->tenant_id,
             ]);
 
             // Create guests

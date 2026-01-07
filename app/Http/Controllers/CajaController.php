@@ -25,9 +25,7 @@ class CajaController extends Controller
         $date = $request->get('date'); // Format: YYYY-MM-DD for specific day
 
         $query = Reservation::query()
-            ->whereHas('room.floor', function($q) use ($tenantId) {
-                $q->where('tenant_id', $tenantId);
-            });
+            ->where('tenant_id', $tenantId);
 
         if ($date) {
             $query->whereDate('check_in_at', $date);
@@ -46,11 +44,11 @@ class CajaController extends Controller
         // 2. Line Chart Data (4 sections if month, flat if day)
         $chartData = $this->getChartData($month, $year, $date, $tenantId);
 
-        // 3. Top 5 Cuartos (Using the same filtered query)
+        // 3. Top 5 Cuartos (Using the same filtered query, ordered by revenue)
         $topRooms = (clone $query)
             ->select('room_id', DB::raw('count(*) as total'), DB::raw('sum(total_price) as revenue'))
             ->groupBy('room_id')
-            ->orderBy('total', 'desc')
+            ->orderBy('revenue', 'desc')
             ->limit(5)
             ->with('room')
             ->get();
@@ -106,9 +104,7 @@ class CajaController extends Controller
         $values = [];
         foreach ($ranges as $range) {
             $val = Reservation::query()
-                ->whereHas('room.floor', function($q) use ($tenantId) {
-                    $q->where('tenant_id', $tenantId);
-                })
+                ->where('tenant_id', $tenantId)
                 ->whereYear('check_in_at', $year)
                 ->whereMonth('check_in_at', $month)
                 ->whereBetween(DB::raw('DAY(check_in_at)'), [$range[0], $range[1]])

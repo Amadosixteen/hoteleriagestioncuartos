@@ -18,6 +18,7 @@ class Reservation extends Model
         'price',
         'total_price',
         'status',
+        'tenant_id',
     ];
 
     protected $casts = [
@@ -40,6 +41,14 @@ class Reservation extends Model
     public function guests(): HasMany
     {
         return $this->hasMany(Guest::class);
+    }
+
+    /**
+     * Get the tenant that owns the reservation.
+     */
+    public function tenant(): BelongsTo
+    {
+        return $this->belongsTo(Tenant::class);
     }
 
     /**
