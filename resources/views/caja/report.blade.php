@@ -34,7 +34,7 @@
         <!-- Sidebar: Filter -->
         <div class="lg:col-span-2 space-y-6">
             <div class="bg-white rounded-2xl border-2 border-gray-100 p-4 shadow-sm">
-                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-3">Moneda</label>
+                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-3">Tipo</label>
                 <div class="flex space-x-2">
                     <button @click="toggleCurrency('Dólares')" 
                             :class="currency === 'Dólares' ? 'bg-[#15803d] text-white' : 'bg-gray-100 text-gray-400'"
@@ -83,7 +83,7 @@
             <div class="lg:col-span-2 bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-gray-50 flex flex-col min-h-[400px] md:h-[450px]">
                 <div class="text-center mb-6">
                     <h3 class="text-xs font-black text-gray-400 uppercase tracking-[0.2em] flex items-center justify-center">
-                        VENTAS DURANTE EL PERIODO
+                        VENTAS DURANTE EL PERIODO 🪙
                         <span class="ml-2">📈</span>
                     </h3>
                     <div class="text-5xl md:text-6xl font-black text-[#1e3a8a] my-2 tabular-nums" x-text="stats.reservations_count">0</div>
