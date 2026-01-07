@@ -86,8 +86,8 @@
                     <div class="text-6xl font-black text-[#1e3a8a] my-4" x-text="stats.reservations_count">0</div>
                 </div>
                 
-                <div class="w-full min-h-[320px] h-[320px] relative" x-ignore style="display: block;">
-                    <canvas id="salesLineChart" style="display: block; width: 100%; height: 100%;"></canvas>
+                <div class="w-full relative bg-white rounded-xl overflow-hidden shadow-inner" style="height: 320px; min-height: 320px;">
+                    <canvas id="salesLineChart" style="width: 100%; height: 100%;"></canvas>
                 </div>
                 
                 <div class="mt-4 text-2xl font-black text-gray-800 uppercase tracking-widest" x-text="stats.period_label">ENERO</div>
@@ -252,19 +252,28 @@ function cajaReport() {
         },
 
         renderCharts(retry = 0) {
-            const canvas = document.getElementById('salesLineChart');
-            if (!canvas) return;
-
-            // Robustness: ensure dimensions are non-zero before initializing
-            if (canvas.offsetWidth === 0 || canvas.offsetHeight === 0) {
-                if (retry < 5) {
+            // Wait for Chart.js to be available (Extreme robustness)
+            if (typeof Chart === 'undefined') {
+                if (retry < 10) {
                     setTimeout(() => this.renderCharts(retry + 1), 200);
                 }
                 return;
             }
 
-            const ctx = canvas.getContext('2d');
-            if (!ctx) return;
+            const canvas = document.getElementById('salesLineChart');
+            if (!canvas) return;
+
+            // Wait for canvas dimensions (Critical for mobile)
+            if (canvas.offsetWidth === 0 || canvas.offsetHeight === 0) {
+                if (retry < 10) {
+                    setTimeout(() => this.renderCharts(retry + 1), 200);
+                }
+                return;
+            }
+
+            try {
+                const ctx = canvas.getContext('2d');
+                if (!ctx) return;
             
             if (this.charts.sales) {
                 this.charts.sales.destroy();
@@ -336,8 +345,10 @@ function cajaReport() {
                             }
                         }
                     }
-                }
-            });
+                });
+            } catch (err) {
+                console.error("Chart.js failed to initialize:", err);
+            }
         }
     }
 }
