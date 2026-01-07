@@ -7,12 +7,42 @@ use App\Models\Reservation;
 use App\Models\Room;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class CajaController extends Controller
 {
     public function report(Request $request)
     {
         return view('caja.report');
+    }
+
+    public function uploadLogo(Request $request)
+    {
+        $request->validate([
+            'logo' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);
+
+        $tenant = auth()->user()->tenant;
+        if (!$tenant) {
+            return response()->json(['error' => 'No tenant associated with user'], 403);
+        }
+
+        if ($request->hasFile('logo')) {
+            // Delete old logo if exists
+            if ($tenant->logo) {
+                Storage::disk('public')->delete($tenant->logo);
+            }
+
+            $path = $request->file('logo')->store('logos', 'public');
+            $tenant->update(['logo' => $path]);
+
+            return response()->json([
+                'success' => true,
+                'logo_url' => asset('storage/' . $path)
+            ]);
+        }
+
+        return response()->json(['error' => 'No file uploaded'], 400);
     }
 
     public function data(Request $request)
@@ -67,6 +97,9 @@ class CajaController extends Controller
             ];
         }
 
+        $tenant = auth()->user()->tenant;
+        $logoUrl = $tenant && $tenant->logo ? asset('storage/' . $tenant->logo) : null;
+
         return response()->json([
             'total_sales' => $totalSales,
             'period_label' => strtoupper($periodLabel),
@@ -78,7 +111,8 @@ class CajaController extends Controller
                 ];
             }),
             'sales_by_category' => $salesByCategory,
-            'reservations_count' => $totalCount
+            'reservations_count' => $totalCount,
+            'hotel_logo' => $logoUrl
         ]);
     }
 

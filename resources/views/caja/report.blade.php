@@ -6,7 +6,29 @@
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8" x-data="cajaReport()" x-init="init()">
     <!-- Header -->
     <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-8 gap-6">
-        <div class="mb-2 md:mb-0">
+        <div class="mb-2 md:mb-0 flex items-center space-x-4">
+            <!-- Hotel Logo / Upload -->
+            <div class="relative group cursor-pointer" title="Cambiar logo del hotel">
+                <div @click="$refs.logoInput.click()" 
+                     class="w-16 h-16 md:w-20 md:h-20 rounded-2xl bg-white border-2 border-dashed border-gray-200 flex items-center justify-center overflow-hidden hover:border-blue-400 transition-all shadow-sm">
+                    <template x-if="stats.hotel_logo">
+                        <img :src="stats.hotel_logo" class="w-full h-full object-cover">
+                    </template>
+                    <template x-if="!stats.hotel_logo">
+                        <svg class="w-8 h-8 text-gray-300 group-hover:text-blue-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                        </svg>
+                    </template>
+                    <!-- Overlay on hover -->
+                    <div class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                        </svg>
+                    </div>
+                </div>
+                <input type="file" x-ref="logoInput" class="hidden" accept="image/*" @change="uploadLogo">
+            </div>
             <h1 class="text-3xl md:text-4xl font-black text-[#1e3a8a] tracking-tight uppercase">REPORTE DE CAJA</h1>
         </div>
         
@@ -83,8 +105,8 @@
             <div class="lg:col-span-2 bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-gray-50 flex flex-col min-h-[400px] md:h-[450px]">
                 <div class="text-center mb-6">
                     <h3 class="text-xs font-black text-gray-400 uppercase tracking-[0.2em] flex items-center justify-center">
-                        VENTAS DURANTE EL PERIODO 🪙
-                        <span class="ml-2">📈</span>
+                        VENTAS DURANTE EL PERIODO
+                        <span class="ml-2">🪙</span>
                     </h3>
                     <div class="text-5xl md:text-6xl font-black text-[#1e3a8a] my-2 tabular-nums" x-text="stats.reservations_count">0</div>
                     <p class="text-[10px] font-bold text-gray-400 uppercase" x-text="stats.period_label">---</p>
@@ -171,7 +193,8 @@ function cajaReport() {
             chart_data: { labels: [], values: [] },
             top_rooms: [],
             sales_by_category: [],
-            reservations_count: 0
+            reservations_count: 0,
+            hotel_logo: null
         },
 
         async init() {
@@ -189,8 +212,32 @@ function cajaReport() {
             await this.fetchData();
         },
 
-        async selectMonth(m) { this.currentMonth = m; await this.fetchData({ month: m }); },
         async selectToday() { await this.fetchData({ date: new Date().toISOString().split('T')[0] }); },
+
+        async uploadLogo(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const formData = new FormData();
+            formData.append('logo', file);
+            formData.append('_token', '{{ csrf_token() }}');
+
+            this.isLoading = true;
+            try {
+                const response = await fetch('{{ route("caja.upload-logo") }}', {
+                    method: 'POST',
+                    body: formData
+                });
+                const result = await response.json();
+                if (result.success) {
+                    this.stats.hotel_logo = result.logo_url;
+                }
+            } catch (err) {
+                console.error("Upload failed", err);
+            } finally {
+                this.isLoading = false;
+            }
+        },
 
         async fetchData(params = {}) {
             this.isLoading = true;

@@ -34,6 +34,7 @@ Route::middleware(['auth', 'tenant'])->group(function () {
 
     Route::get('/caja/report', [App\Http\Controllers\CajaController::class, 'report'])->name('caja.report');
     Route::get('/caja/data', [App\Http\Controllers\CajaController::class, 'data'])->name('caja.data');
+    Route::post('/caja/upload-logo', [App\Http\Controllers\CajaController::class, 'uploadLogo'])->name('caja.upload-logo');
 
     Route::get('/analytics', [App\Http\Controllers\AnalyticsController::class, 'index'])->name('analytics.index');
     Route::get('/calendar', [App\Http\Controllers\CalendarController::class, 'index'])->name('calendar.index');
