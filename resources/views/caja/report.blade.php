@@ -86,8 +86,8 @@
                     <div class="text-6xl font-black text-[#1e3a8a] my-4" x-text="stats.reservations_count">0</div>
                 </div>
                 
-                <div class="w-full relative bg-white rounded-xl overflow-hidden shadow-inner" style="height: 320px; min-height: 320px;">
-                    <canvas id="salesLineChart" style="width: 100%; height: 100%;"></canvas>
+                <div class="w-full relative bg-white rounded-xl overflow-hidden shadow-inner" style="height: 320px; min-height: 320px;" x-ignore>
+                    <canvas id="salesLineChart" style="width: 100%; height: 100%; display: block;"></canvas>
                 </div>
                 
                 <div class="mt-4 text-2xl font-black text-gray-800 uppercase tracking-widest" x-text="stats.period_label">ENERO</div>
@@ -251,29 +251,26 @@ function cajaReport() {
         },
 
         renderCharts(retry = 0) {
-            if (typeof Chart === 'undefined') {
-                if (retry < 15) setTimeout(() => this.renderCharts(retry + 1), 200);
-                return;
-            }
-
             const canvas = document.getElementById('salesLineChart');
             if (!canvas) return;
 
-            if (canvas.offsetWidth === 0 && retry < 10) {
-                setTimeout(() => this.renderCharts(retry + 1), 200);
+            // Wait for library and dimensions
+            if (typeof Chart === 'undefined' || canvas.offsetWidth === 0) {
+                if (retry < 20) { // More retries for mobile
+                    setTimeout(() => this.renderCharts(retry + 1), 200);
+                }
                 return;
             }
 
             const ctx = canvas.getContext('2d');
             if (!ctx) return;
             
+            // Clean up and prevent duplicate renders
             if (this.charts.sales) {
                 this.charts.sales.destroy();
-                this.charts.sales = null;
             }
 
             if (!this.stats.chart_data || !this.stats.chart_data.values || this.stats.chart_data.values.length === 0) {
-                console.log("No chart data to render");
                 return;
             }
 
@@ -282,48 +279,49 @@ function cajaReport() {
                 return this.currency === 'Dólares' ? (val / this.exchangeRate) : val;
             });
 
-            // Use requestAnimationFrame for guaranteed rendering stability
+            // Double frame wait for mobile stability
             requestAnimationFrame(() => {
-                try {
-                    this.charts.sales = new Chart(ctx, {
-                        type: 'line',
-                        data: {
-                            labels: this.stats.chart_data.labels || [],
-                            datasets: [{
-                                label: 'Ventas (' + (this.currency === 'Soles' ? 'S/' : '$') + ')',
-                                data: finalValues,
-                                borderColor: '#2563eb',
-                                backgroundColor: 'rgba(37, 99, 235, 0.1)',
-                                borderWidth: 3,
-                                pointBackgroundColor: '#ffffff',
-                                pointBorderColor: '#2563eb',
-                                pointBorderWidth: 2,
-                                pointRadius: 4,
-                                tension: 0.3,
-                                fill: true,
-                                spanGaps: true
-                            }]
-                        },
-                        options: {
-                            responsive: true,
-                            maintainAspectRatio: false,
-                            animation: { duration: 600 },
-                            plugins: { legend: { display: false } },
-                            scales: {
-                                y: {
-                                    beginAtZero: true,
-                                    grid: { color: '#f3f4f6' },
-                                    ticks: { 
-                                        callback: (val) => (this.currency === 'Soles' ? 'S/ ' : '$ ') + val 
+                requestAnimationFrame(() => {
+                    try {
+                        this.charts.sales = new Chart(ctx, {
+                            type: 'line',
+                            data: {
+                                labels: this.stats.chart_data.labels || [],
+                                datasets: [{
+                                    label: 'Ventas (' + (this.currency === 'Soles' ? 'S/' : '$') + ')',
+                                    data: finalValues,
+                                    borderColor: '#2563eb',
+                                    backgroundColor: 'rgba(37, 99, 235, 0.1)',
+                                    borderWidth: 3,
+                                    pointBackgroundColor: '#ffffff',
+                                    pointBorderColor: '#2563eb',
+                                    pointBorderWidth: 2,
+                                    pointRadius: 4,
+                                    tension: 0.3,
+                                    fill: true,
+                                    spanGaps: true
+                                }]
+                            },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                devicePixelRatio: window.devicePixelRatio || 2,
+                                plugins: { legend: { display: false } },
+                                scales: {
+                                    y: {
+                                        beginAtZero: true,
+                                        grid: { color: '#f3f4f6' },
+                                        ticks: { 
+                                            callback: (val) => (this.currency === 'Soles' ? 'S/ ' : '$ ') + val 
+                                        }
                                     }
                                 }
                             }
-                        }
-                    });
-                    console.log("Chart rendered successfully");
-                } catch (err) {
-                    console.error("Chart draw error:", err);
-                }
+                        });
+                    } catch (err) {
+                        console.error("Chart draw error:", err);
+                    }
+                });
             });
         }
     };
