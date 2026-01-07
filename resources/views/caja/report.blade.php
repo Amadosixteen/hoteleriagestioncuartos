@@ -212,6 +212,11 @@ function cajaReport() {
             await this.fetchData();
         },
 
+        async selectMonth(m) { 
+            this.currentMonth = m; 
+            await this.fetchData({ month: m }); 
+        },
+
         async selectToday() { await this.fetchData({ date: new Date().toISOString().split('T')[0] }); },
 
         async uploadLogo(e) {
