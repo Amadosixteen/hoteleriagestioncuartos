@@ -77,8 +77,8 @@
         <!-- Main Content -->
         <div class="lg:col-span-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             <!-- Line Chart Section -->
-            <div class="lg:col-span-2 bg-white rounded-3xl p-8 shadow-sm border border-gray-50 flex flex-col items-center">
-                <div class="text-center mb-8">
+            <div class="lg:col-span-2 bg-white rounded-3xl p-8 shadow-sm border border-gray-50 flex flex-col">
+                <div class="text-center mb-8 w-full">
                     <h3 class="text-lg font-black text-gray-400 uppercase tracking-widest flex items-center justify-center">
                         Ventas Durante el Periodo
                         <span class="ml-2 text-yellow-400">🪙</span>
@@ -86,7 +86,7 @@
                     <div class="text-6xl font-black text-[#1e3a8a] my-4" x-text="stats.reservations_count">0</div>
                 </div>
                 
-                <div class="w-full h-64 relative overflow-hidden">
+                <div class="w-full h-[350px] relative overflow-hidden">
                     <canvas id="salesLineChart"></canvas>
                 </div>
                 
@@ -194,6 +194,12 @@ function cajaReport() {
                 picker.open();
             });
 
+            window.addEventListener('resize', () => {
+                if (this.charts.sales) {
+                    this.charts.sales.resize();
+                }
+            });
+
             await this.fetchData();
         },
 
@@ -215,7 +221,8 @@ function cajaReport() {
                 const data = await response.json();
                 
                 this.stats = data;
-                this.renderCharts();
+                // Use setTimeout to ensure DOM is ready on mobile before drawing
+                setTimeout(() => this.renderCharts(), 100);
             } catch (error) {
                 console.error("Error fetching data:", error);
             } finally {
@@ -266,21 +273,23 @@ function cajaReport() {
                     datasets: [{
                         label: 'Ventas (' + (this.currency === 'Soles' ? 'S/' : '$') + ')',
                         data: chartValues,
-                        borderColor: '#2563eb',
-                        backgroundColor: '#2563eb20',
+                        borderColor: 'rgba(37, 99, 235, 1)',
+                        backgroundColor: 'rgba(37, 99, 235, 0.15)',
                         borderWidth: 4,
                         pointBackgroundColor: '#ffffff',
-                        pointBorderColor: '#2563eb',
+                        pointBorderColor: 'rgba(37, 99, 235, 1)',
                         pointBorderWidth: 3,
                         pointRadius: 6,
                         pointHoverRadius: 8,
-                        tension: 0.4,
-                        fill: true
+                        tension: 0.2, // Reduced tension for better mobile rendering stability
+                        fill: true,
+                        spanGaps: true
                     }]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
+                    devicePixelRatio: window.devicePixelRatio || 1,
                     animation: {
                         duration: 800
                     },
