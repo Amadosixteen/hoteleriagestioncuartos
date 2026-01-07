@@ -86,7 +86,7 @@
                     <div class="text-6xl font-black text-[#1e3a8a] my-4" x-text="stats.reservations_count">0</div>
                 </div>
                 
-                <div class="w-full h-[320px] relative bg-white" x-ignore>
+                <div class="w-full min-h-[320px] h-[320px] relative" x-ignore style="display: block;">
                     <canvas id="salesLineChart" style="display: block; width: 100%; height: 100%;"></canvas>
                 </div>
                 
@@ -157,7 +157,6 @@
 @endpush
 
 @push('scripts')
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/es.js"></script>
 
@@ -221,9 +220,11 @@ function cajaReport() {
                 const data = await response.json();
                 
                 this.stats = data;
-                // Wait for Alpine to settle then draw
+                // Wait for Alpine to render and DOM to stabilize
                 this.$nextTick(() => {
-                    setTimeout(() => this.renderCharts(), 150);
+                    setTimeout(() => {
+                        this.renderCharts();
+                    }, 50);
                 });
             } catch (error) {
                 console.error("Error fetching data:", error);
@@ -254,13 +255,16 @@ function cajaReport() {
             const canvas = document.getElementById('salesLineChart');
             if (!canvas) return;
 
-            // Robustness: wait if the canvas has no dimensions yet (common on mobile)
-            if (canvas.offsetWidth === 0 && retry < 3) {
-                setTimeout(() => this.renderCharts(retry + 1), 150);
+            // Robustness: ensure dimensions are non-zero before initializing
+            if (canvas.offsetWidth === 0 || canvas.offsetHeight === 0) {
+                if (retry < 5) {
+                    setTimeout(() => this.renderCharts(retry + 1), 200);
+                }
                 return;
             }
 
             const ctx = canvas.getContext('2d');
+            if (!ctx) return;
             
             if (this.charts.sales) {
                 this.charts.sales.destroy();
@@ -281,15 +285,15 @@ function cajaReport() {
                     datasets: [{
                         label: 'Ventas (' + (this.currency === 'Soles' ? 'S/' : '$') + ')',
                         data: chartValues,
-                        borderColor: 'rgba(37, 99, 235, 1)',
-                        backgroundColor: 'rgba(37, 99, 235, 0.15)',
+                        borderColor: '#2563eb',
+                        backgroundColor: '#2563eb20',
                         borderWidth: 4,
                         pointBackgroundColor: '#ffffff',
-                        pointBorderColor: 'rgba(37, 99, 235, 1)',
-                        pointBorderWidth: 3,
+                        pointBorderColor: '#2563eb',
+                        pointBorderWidth: 4,
                         pointRadius: 6,
-                        pointHoverRadius: 8,
-                        tension: 0.2, // Reduced tension for better mobile rendering stability
+                        pointHoverRadius: 9,
+                        tension: 0.3,
                         fill: true,
                         spanGaps: true
                     }]
@@ -297,8 +301,9 @@ function cajaReport() {
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
+                    devicePixelRatio: window.devicePixelRatio || 2,
                     animation: {
-                        duration: 800
+                        duration: 600
                     },
                     interaction: {
                         intersect: false,
