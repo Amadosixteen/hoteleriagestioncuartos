@@ -100,9 +100,11 @@
                             <div class="flex flex-col items-center">
                                 <span class="text-sm font-bold text-gray-800 mb-3 text-center">Renovar mi Suscripción</span>
                                 <div class="w-full p-3 bg-blue-50 rounded-lg flex flex-col items-center">
-                                    <p class="text-xs text-blue-600 font-medium mb-2">Escanea para renovar:</p>
-                                    <img src="{{ asset('img/yape_qr.jpg') }}" alt="Yape QR" class="w-32 h-32 rounded-lg shadow-sm mb-2 border-2 border-white">
-                                    <p class="text-[10px] text-blue-400 text-center uppercase tracking-tighter mb-2">Costo: S/ 35.90 por mes</p>
+                                    <p class="text-xs text-blue-600 font-medium mb-3">Escanea para renovar:</p>
+                                    <div class="w-48 h-48 overflow-hidden rounded-xl shadow-md border-2 border-white bg-white">
+                                        <img src="{{ asset('img/yape_qr.jpg') }}" alt="Yape QR" class="w-full h-[140%] object-cover object-top" style="image-rendering: -webkit-optimize-contrast; image-rendering: crisp-edges;">
+                                    </div>
+                                    <p class="text-[10px] text-blue-400 text-center uppercase tracking-tighter mt-3 mb-2">Costo: S/ 35.90 por mes</p>
                                     
                                     <div class="w-full pt-2 border-t border-blue-200">
                                         <p class="text-[10px] text-blue-700 text-center leading-tight">
@@ -187,9 +189,11 @@
 
                         <!-- Info de Yape -->
                         <div x-show="showYape" class="mt-4 p-3 bg-white border border-blue-100 rounded-md shadow-inner" x-transition>
-                            <p class="text-xs text-center text-gray-600 mb-2">Escanea el QR para yapear:</p>
+                            <p class="text-xs text-center text-gray-600 mb-3">Escanea el QR para yapear:</p>
                             <div class="flex justify-center mb-3">
-                                <img src="{{ asset('img/yape_qr.jpg') }}" alt="Yape QR" class="w-40 h-40 rounded-lg border-2 border-gray-50">
+                                <div class="w-56 h-56 overflow-hidden rounded-xl border-2 border-gray-50 bg-white shadow-sm">
+                                    <img src="{{ asset('img/yape_qr.jpg') }}" alt="Yape QR" class="w-full h-[140%] object-cover object-top" style="image-rendering: -webkit-optimize-contrast; image-rendering: crisp-edges;">
+                                </div>
                             </div>
                             <p class="text-[10px] text-center text-gray-400 mb-3">Costo: S/ 35.90 por mes</p>
                             
