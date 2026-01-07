@@ -100,8 +100,8 @@
                             <div class="flex flex-col items-center">
                                 <span class="text-sm font-bold text-gray-800 mb-3 text-center">Renovar mi Suscripción</span>
                                 <div class="w-full p-3 bg-blue-50 rounded-lg flex flex-col items-center">
-                                    <p class="text-xs text-blue-600 font-medium mb-1">Renueva con yape:</p>
-                                    <p class="text-xl font-black text-blue-800 mb-1">905 562 625</p>
+                                    <p class="text-xs text-blue-600 font-medium mb-2">Escanea para renovar:</p>
+                                    <img src="{{ asset('img/yape_qr.jpg') }}" alt="Yape QR" class="w-32 h-32 rounded-lg shadow-sm mb-2 border-2 border-white">
                                     <p class="text-[10px] text-blue-400 text-center uppercase tracking-tighter mb-2">Costo: S/ 35.90 por mes</p>
                                     
                                     <div class="w-full pt-2 border-t border-blue-200">
@@ -187,8 +187,10 @@
 
                         <!-- Info de Yape -->
                         <div x-show="showYape" class="mt-4 p-3 bg-white border border-blue-100 rounded-md shadow-inner" x-transition>
-                            <p class="text-xs text-center text-gray-600 mb-2">Escanea el QR o yapea al número:</p>
-                            <p class="text-lg font-black text-blue-800 text-center mb-1">905 562 625</p>
+                            <p class="text-xs text-center text-gray-600 mb-2">Escanea el QR para yapear:</p>
+                            <div class="flex justify-center mb-3">
+                                <img src="{{ asset('img/yape_qr.jpg') }}" alt="Yape QR" class="w-40 h-40 rounded-lg border-2 border-gray-50">
+                            </div>
                             <p class="text-[10px] text-center text-gray-400 mb-3">Costo: S/ 35.90 por mes</p>
                             
                             <div class="bg-blue-50 p-2 rounded border border-blue-100">
