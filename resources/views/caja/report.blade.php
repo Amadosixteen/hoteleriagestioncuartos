@@ -157,7 +157,6 @@
 @endpush
 
 @push('scripts')
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/es.js"></script>
 
@@ -253,7 +252,7 @@ function cajaReport() {
 
         renderCharts(retry = 0) {
             if (typeof Chart === 'undefined') {
-                if (retry < 10) setTimeout(() => this.renderCharts(retry + 1), 200);
+                if (retry < 15) setTimeout(() => this.renderCharts(retry + 1), 200);
                 return;
             }
 
@@ -273,52 +272,59 @@ function cajaReport() {
                 this.charts.sales = null;
             }
 
-            if (!this.stats.chart_data || !this.stats.chart_data.values || this.stats.chart_data.values.length === 0) return;
+            if (!this.stats.chart_data || !this.stats.chart_data.values || this.stats.chart_data.values.length === 0) {
+                console.log("No chart data to render");
+                return;
+            }
 
-            const values = this.stats.chart_data.values.map(v => {
+            const finalValues = this.stats.chart_data.values.map(v => {
                 let val = parseFloat(v || 0);
                 return this.currency === 'Dólares' ? (val / this.exchangeRate) : val;
             });
 
-            try {
-                this.charts.sales = new Chart(ctx, {
-                    type: 'line',
-                    data: {
-                        labels: this.stats.chart_data.labels || [],
-                        datasets: [{
-                            label: 'Ventas (' + (this.currency === 'Soles' ? 'S/' : '$') + ')',
-                            data: values,
-                            borderColor: '#2563eb',
-                            backgroundColor: 'rgba(37, 99, 235, 0.1)',
-                            borderWidth: 3,
-                            pointBackgroundColor: '#ffffff',
-                            pointBorderColor: '#2563eb',
-                            pointBorderWidth: 2,
-                            pointRadius: 4,
-                            tension: 0.3,
-                            fill: true,
-                            spanGaps: true
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        animation: { duration: 600 },
-                        plugins: { legend: { display: false } },
-                        scales: {
-                            y: {
-                                beginAtZero: true,
-                                grid: { color: '#f3f4f6' },
-                                ticks: { 
-                                    callback: (val) => (this.currency === 'Soles' ? 'S/ ' : '$ ') + val 
+            // Use requestAnimationFrame for guaranteed rendering stability
+            requestAnimationFrame(() => {
+                try {
+                    this.charts.sales = new Chart(ctx, {
+                        type: 'line',
+                        data: {
+                            labels: this.stats.chart_data.labels || [],
+                            datasets: [{
+                                label: 'Ventas (' + (this.currency === 'Soles' ? 'S/' : '$') + ')',
+                                data: finalValues,
+                                borderColor: '#2563eb',
+                                backgroundColor: 'rgba(37, 99, 235, 0.1)',
+                                borderWidth: 3,
+                                pointBackgroundColor: '#ffffff',
+                                pointBorderColor: '#2563eb',
+                                pointBorderWidth: 2,
+                                pointRadius: 4,
+                                tension: 0.3,
+                                fill: true,
+                                spanGaps: true
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            animation: { duration: 600 },
+                            plugins: { legend: { display: false } },
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    grid: { color: '#f3f4f6' },
+                                    ticks: { 
+                                        callback: (val) => (this.currency === 'Soles' ? 'S/ ' : '$ ') + val 
+                                    }
                                 }
                             }
                         }
-                    }
-                });
-            } catch (err) {
-                console.error("Chart error:", err);
-            }
+                    });
+                    console.log("Chart rendered successfully");
+                } catch (err) {
+                    console.error("Chart draw error:", err);
+                }
+            });
         }
     };
 }
