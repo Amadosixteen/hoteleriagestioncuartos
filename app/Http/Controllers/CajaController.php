@@ -119,10 +119,11 @@ class CajaController extends Controller
     private function getChartData($month, $year, $date, $tenantId)
     {
         if ($date) {
-            // If it's a specific day, show single point
+            // If it's a specific day, show the actual day number as label
+            $dayLabel = Carbon::parse($date)->format('d');
             return [
-                'labels' => ['Hoy'],
-                'values' => [Reservation::whereDate('check_in_at', $date)->sum('total_price')]
+                'labels' => [$dayLabel],
+                'values' => [Reservation::whereDate('check_in_at', $date)->where('tenant_id', $tenantId)->sum('total_price')]
             ];
         }
 
