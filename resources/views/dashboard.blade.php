@@ -125,16 +125,19 @@
 
 @push('scripts')
 <script>
-function dashboardApp() {
-    return {
-        showModal: false,
-        selectedRoom: null,
-        selectedRoomType: '',
-        selectedRoomPrice: 0,
-        filterType: 'all',
-        sortByPrice: null,
-        reservation: null,
-        guests: [{ 
+    // Global configuration from backend
+    window.OVERTIME_RATE = parseFloat("{{ number_format(auth()->user()->tenant->overtime_rate_per_hour ?? 0, 2, '.', '') }}");
+
+    function dashboardApp() {
+        return {
+            showModal: false,
+            selectedRoom: null,
+            selectedRoomType: '',
+            selectedRoomPrice: 0,
+            filterType: 'all',
+            sortByPrice: null,
+            reservation: null,
+            guests: [{ 
             document_type: 'dni', 
             custom_document_type: '',
             document_number: '', 
@@ -190,7 +193,9 @@ function dashboardApp() {
             if (diff <= 0) return 0;
             
             const overtimeHours = diff / 3600000; // Convert ms to hours
-            const overtimeRate = {{ auth()->user()->tenant->overtime_rate_per_hour ?? 0 }};
+            
+            // Use the global rate injected from backend
+            const overtimeRate = window.OVERTIME_RATE || 0;
             
             return overtimeHours * overtimeRate;
         },
