@@ -119,15 +119,17 @@ class CajaController extends Controller
     private function getChartData($month, $year, $date, $tenantId)
     {
         if ($date) {
-            // If it's a specific day, maybe show by hours or just a single point
-            // For now, let's keep it simple as requested: image shows sem1-sem4 for month
+            // If it's a specific day, show single point
             return [
                 'labels' => ['Hoy'],
                 'values' => [Reservation::whereDate('check_in_at', $date)->sum('total_price')]
             ];
         }
 
+        // Get the actual number of days in the month
         $daysInMonth = Carbon::create($year, $month)->daysInMonth;
+        
+        // Create dynamic week ranges (approximately 7 days each)
         $ranges = [
             [1, 7],
             [8, 14],
@@ -135,8 +137,17 @@ class CajaController extends Controller
             [22, $daysInMonth]
         ];
 
+        $labels = [];
         $values = [];
+        
+        // Get month abbreviation in Spanish
+        $monthName = Carbon::create($year, $month, 1)->translatedFormat('M');
+        
         foreach ($ranges as $range) {
+            // Create label like "1-7 Ene", "8-14 Ene", etc.
+            $labels[] = $range[0] . '-' . $range[1] . ' ' . $monthName;
+            
+            // Calculate sales for this range
             $val = Reservation::query()
                 ->where('tenant_id', $tenantId)
                 ->whereYear('check_in_at', $year)
@@ -147,7 +158,7 @@ class CajaController extends Controller
         }
 
         return [
-            'labels' => ['sem1', 'sem2', 'sem3', 'sem4'],
+            'labels' => $labels,
             'values' => $values
         ];
     }
