@@ -273,8 +273,8 @@ class ReservationController extends Controller
         $reservation = Reservation::findOrFail($id);
         $this->authorize('update', $reservation->room);
 
-        // Verify reservation is expired
-        if ($reservation->status !== 'active' || $reservation->check_out_at > now()) {
+        // Verify reservation is expired (with 2 minutes buffer for clock drift/misconfiguration)
+        if ($reservation->status !== 'active' || $reservation->check_out_at > now()->addMinutes(2)) {
             return response()->json(['error' => 'La reserva no está vencida'], 422);
         }
 
