@@ -24,6 +24,11 @@
     @endif
     @click="window.dispatchEvent(new CustomEvent('open-reservation-modal', { detail: { roomId: {{ $room->id }}, roomType: '{{ $room->type }}', roomPrice: {{ $room->price }}, hasReservation: {{ $hasReservation ? 'true' : 'false' }}, status: '{{ $room->status }}' } }))"
 >
+    <!-- Room Price Badge -->
+    <div class="absolute top-1 right-1.5 px-1.5 py-0.5 bg-white/40 rounded-md text-[8px] font-black text-gray-400/80 shadow-sm border border-gray-100/50 tabular-nums">
+        S/ {{ number_format($room->price, 0) }}
+    </div>
+
     <!-- Room Number & Type -->
     <div class="text-center mb-1">
         <span class="text-lg font-bold text-gray-800">{{ $room->room_number }}</span>
