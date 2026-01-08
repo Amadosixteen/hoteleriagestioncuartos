@@ -70,6 +70,9 @@
                                         <p class="text-[10px] text-gray-500 mt-1" x-show="isOvertimeEdited()">
                                             (Editado manualmente)
                                         </p>
+                                        <p class="text-[10px] text-gray-400 mt-0.5">
+                                            Tarifa: <span x-text="formatMoney(window.OVERTIME_RATE || 0)">S/ 0.00</span> / hora
+                                        </p>
                                     </div>
                                     <div x-show="editingOvertimeCharge" class="relative">
                                         <span class="absolute left-2 top-1/2 -translate-y-1/2 text-gray-500 text-sm">S/</span>
@@ -78,6 +81,7 @@
                                             step="0.01" 
                                             min="0"
                                             x-model.number="customOvertimeCharge"
+                                            :placeholder="calculateOvertimeCharge().toFixed(2)"
                                             @blur="editingOvertimeCharge = false"
                                             @click.stop
                                             class="w-full pl-8 pr-2 py-1 border border-blue-300 rounded text-xl font-black text-red-600 focus:ring-2 focus:ring-blue-500"
