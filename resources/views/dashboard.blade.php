@@ -252,13 +252,9 @@ function dashboardApp() {
             
             this.showModal = true;
             
-            // Initialize custom overtime charge after a short delay to ensure reservation is loaded
+            // Initialize custom overtime charge after reservation is loaded
             setTimeout(() => {
-                const calculated = this.calculateOvertimeCharge();
-                console.log('Calculated overtime charge:', calculated);
-                console.log('Current reservation:', this.reservation);
-                console.log('Room status:', this.currentRoomStatus);
-                this.customOvertimeCharge = calculated;
+                this.customOvertimeCharge = this.calculateOvertimeCharge();
             }, 200);
         },
 

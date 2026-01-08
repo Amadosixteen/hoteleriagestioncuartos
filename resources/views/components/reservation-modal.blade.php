@@ -39,7 +39,7 @@
                 </div>
 
                 <!-- Overtime Charge Section (for expired reservations) -->
-                <div x-show="currentRoomStatus === 'expired' && isEditing && (!reservation || !reservation.overtime_charge)" class="mb-6 bg-red-50 border-2 border-red-300 rounded-xl p-5">
+                <div x-show="currentRoomStatus === 'expired' && isEditing && (reservation?.overtime_charge ?? 0) === 0" class="mb-6 bg-red-50 border-2 border-red-300 rounded-xl p-5">
                     <div class="flex items-start justify-between mb-4">
                         <div class="flex items-center space-x-2">
                             <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -57,15 +57,15 @@
                         <div class="bg-white rounded-lg p-3">
                             <p class="text-xs text-gray-600 mb-1 flex items-center justify-between">
                                 <span>Cobro a Aplicar</span>
-                                <button type="button" @click="editingOvertimeCharge = !editingOvertimeCharge" class="text-blue-600 hover:text-blue-800">
+                                <button type="button" @click.stop="editingOvertimeCharge = !editingOvertimeCharge" class="text-blue-600 hover:text-blue-800">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path>
                                     </svg>
                                 </button>
                             </p>
                             <div x-show="!editingOvertimeCharge">
-                                <p class="text-2xl font-black text-red-600" x-text="'S/ ' + customOvertimeCharge.toFixed(2)">S/ 0.00</p>
-                                <p class="text-[10px] text-gray-500 mt-1" x-show="customOvertimeCharge !== calculateOvertimeCharge()">
+                                <p class="text-2xl font-black text-red-600" x-text="'S/ ' + (customOvertimeCharge || 0).toFixed(2)">S/ 0.00</p>
+                                <p class="text-[10px] text-gray-500 mt-1" x-show="Math.abs((customOvertimeCharge || 0) - calculateOvertimeCharge()) > 0.01">
                                     (Editado manualmente)
                                 </p>
                             </div>
@@ -77,6 +77,7 @@
                                     min="0"
                                     x-model.number="customOvertimeCharge"
                                     @blur="editingOvertimeCharge = false"
+                                    @click.stop
                                     class="w-full pl-8 pr-2 py-1 border border-blue-300 rounded text-xl font-black text-red-600 focus:ring-2 focus:ring-blue-500"
                                 >
                             </div>
@@ -97,7 +98,7 @@
                 </div>
 
                 <!-- Overtime Already Applied Notice -->
-                <div x-show="currentRoomStatus === 'expired' && reservation && reservation.overtime_charge > 0" class="mb-6 bg-green-50 border border-green-200 rounded-lg p-4">
+                <div x-show="currentRoomStatus === 'expired' && isEditing && (reservation?.overtime_charge ?? 0) > 0" class="mb-6 bg-green-50 border border-green-200 rounded-lg p-4">
                     <div class="flex items-center space-x-2">
                         <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
@@ -105,9 +106,8 @@
                         <div>
                             <p class="text-sm font-semibold text-green-900">Cobro de tiempo extra ya aplicado</p>
                             <p class="text-xs text-green-700">
-                                <span x-text="reservation.overtime_hours">0</span> horas × 
-                                <span>S/ <span x-text="(reservation.overtime_charge / reservation.overtime_hours).toFixed(2)">0</span></span> = 
-                                <strong>S/ <span x-text="reservation.overtime_charge">0</span></strong>
+                                <span x-text="(reservation?.overtime_hours ?? 0).toFixed(2)">0</span> horas - 
+                                <strong>S/ <span x-text="(reservation?.overtime_charge ?? 0).toFixed(2)">0</span></strong>
                             </p>
                         </div>
                     </div>
