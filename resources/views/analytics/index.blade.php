@@ -86,7 +86,7 @@
         <!-- Frequent Guests Table -->
         <div class="bg-white rounded-3xl shadow-sm border border-gray-50 overflow-hidden">
             <div class="px-6 py-4 border-b border-gray-100 bg-gray-50">
-                <h3 class="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] text-center">Mejores Clientes Frecuentes</h3>
+                <h3 class="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] text-center">Top 10 Clientes Frecuentes</h3>
             </div>
             <div class="overflow-x-auto">
                 <table class="min-w-full divide-y divide-gray-100">
