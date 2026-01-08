@@ -264,4 +264,49 @@ class ReservationController extends Controller
 
         return response()->json(['message' => $message]);
     }
+
+    /**
+     * Apply overtime charge to an expired reservation.
+     */
+    public function applyOvertimeCharge(Request $request, $id)
+    {
+        $reservation = Reservation::findOrFail($id);
+        $this->authorize('update', $reservation->room);
+
+        // Verify reservation is expired
+        if ($reservation->status !== 'active' || $reservation->check_out_at > now()) {
+            return response()->json(['error' => 'La reserva no está vencida'], 422);
+        }
+
+        // Get tenant's overtime rate
+        $tenant = auth()->user()->tenant;
+        $overtimeRate = $tenant->overtime_rate_per_hour ?? 0;
+
+        if ($overtimeRate <= 0) {
+            return response()->json(['error' => 'No se ha configurado una tarifa de tiempo extra'], 422);
+        }
+
+        // Calculate overtime hours
+        $checkoutAt = $reservation->check_out_at;
+        $now = now();
+        $overtimeMinutes = $checkoutAt->diffInMinutes($now);
+        $overtimeHours = round($overtimeMinutes / 60, 2);
+
+        // Calculate charge
+        $overtimeCharge = round($overtimeHours * $overtimeRate, 2);
+
+        // Update reservation
+        $reservation->update([
+            'overtime_hours' => $overtimeHours,
+            'overtime_charge' => $overtimeCharge,
+            'total_price' => $reservation->total_price + $overtimeCharge
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'overtime_hours' => $overtimeHours,
+            'overtime_charge' => $overtimeCharge,
+            'new_total' => $reservation->total_price
+        ]);
+    }
 }

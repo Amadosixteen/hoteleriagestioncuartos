@@ -178,6 +178,61 @@ function dashboardApp() {
             return `${hours}h ${minutes}m`;
         },
 
+        calculateOvertimeCharge() {
+            if (!this.reservation || !this.reservation.check_out_at) return 0;
+            
+            const checkoutAt = new Date(this.reservation.check_out_at);
+            const now = new Date();
+            const diff = now - checkoutAt;
+            
+            if (diff <= 0) return 0;
+            
+            const overtimeHours = diff / 3600000; // Convert ms to hours
+            const overtimeRate = {{ auth()->user()->tenant->overtime_rate_per_hour ?? 0 }};
+            
+            return overtimeHours * overtimeRate;
+        },
+
+        async applyOvertimeCharge() {
+            if (!this.reservation || this.isLoading) return;
+            
+            if (!confirm('¿Estás seguro de aplicar el cobro de tiempo extra? Esta acción actualizará el total de la reserva.')) {
+                return;
+            }
+
+            this.isLoading = true;
+            this.errorMessage = '';
+
+            try {
+                const response = await fetch(`/reservations/${this.reservation.id}/apply-overtime`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                    }
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    // Update reservation data
+                    this.reservation.overtime_charge = data.overtime_charge;
+                    this.reservation.overtime_hours = data.overtime_hours;
+                    this.reservation.total_price = data.new_total;
+                    
+                    alert(`Cobro de tiempo extra aplicado correctamente:\n${data.overtime_hours.toFixed(2)} horas × S/ ${(data.overtime_charge / data.overtime_hours).toFixed(2)} = S/ ${data.overtime_charge.toFixed(2)}`);
+                } else {
+                    this.errorMessage = data.error || 'Error al aplicar el cobro de tiempo extra';
+                }
+            } catch (error) {
+                console.error('Error applying overtime charge:', error);
+                this.errorMessage = 'Ocurrió un error inesperado. Inténtalo de nuevo.';
+            } finally {
+                this.isLoading = false;
+            }
+        },
+
         openModal(roomId, hasReservation = false, status = 'available') {
             this.selectedRoom = roomId;
             this.isEditing = hasReservation;

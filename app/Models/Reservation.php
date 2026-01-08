@@ -17,6 +17,8 @@ class Reservation extends Model
         'has_vehicle',
         'price',
         'total_price',
+        'overtime_charge',
+        'overtime_hours',
         'status',
         'tenant_id',
     ];

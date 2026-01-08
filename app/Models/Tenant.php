@@ -10,6 +10,7 @@ class Tenant extends Model
     protected $fillable = [
         'name',
         'logo',
+        'overtime_rate_per_hour',
         'phone',
         'location',
         'slug',

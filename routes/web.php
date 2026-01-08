@@ -35,6 +35,11 @@ Route::middleware(['auth', 'tenant'])->group(function () {
     Route::get('/caja/report', [App\Http\Controllers\CajaController::class, 'report'])->name('caja.report');
     Route::get('/caja/data', [App\Http\Controllers\CajaController::class, 'data'])->name('caja.data');
     Route::post('/caja/upload-logo', [App\Http\Controllers\CajaController::class, 'uploadLogo'])->name('caja.upload-logo');
+    
+    Route::post('/reservations/{id}/apply-overtime', [App\Http\Controllers\ReservationController::class, 'applyOvertimeCharge'])->name('reservations.apply-overtime');
+    
+    Route::get('/settings', [App\Http\Controllers\TenantSettingsController::class, 'index'])->name('settings.index');
+    Route::post('/settings/overtime-rate', [App\Http\Controllers\TenantSettingsController::class, 'updateOvertimeRate'])->name('settings.update-overtime-rate');
 
     Route::get('/analytics', [App\Http\Controllers\AnalyticsController::class, 'index'])->name('analytics.index');
     Route::get('/calendar', [App\Http\Controllers\CalendarController::class, 'index'])->name('calendar.index');
