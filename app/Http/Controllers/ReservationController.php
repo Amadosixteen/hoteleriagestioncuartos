@@ -273,9 +273,12 @@ class ReservationController extends Controller
         $reservation = Reservation::findOrFail($id);
         $this->authorize('update', $reservation->room);
 
-        // Verify reservation is expired (with 2 minutes buffer for clock drift/misconfiguration)
-        if ($reservation->status !== 'active' || $reservation->check_out_at > now()->addMinutes(2)) {
-            return response()->json(['error' => 'La reserva no está vencida'], 422);
+        // Verify reservation is active
+        // We removed the strict time check (check_out_at > now()) to allow the admin
+        // to manually apply overtime charges even if the server time is slightly behind
+        // or if there are timezone discrepancies. We trust the admin's manual action.
+        if ($reservation->status !== 'active') {
+            return response()->json(['error' => 'La reserva no está activa'], 422);
         }
 
         // Calculate overtime hours
