@@ -195,6 +195,32 @@ function dashboardApp() {
             return overtimeHours * overtimeRate;
         },
 
+        hasOvertimeCharge() {
+            if (!this.reservation) return false;
+            return this.reservation.overtime_charge && this.reservation.overtime_charge > 0;
+        },
+
+        getOvertimeHours() {
+            if (!this.reservation || !this.reservation.overtime_hours) return '0.00';
+            return this.reservation.overtime_hours.toFixed(2);
+        },
+
+        getOvertimeChargeAmount() {
+            if (!this.reservation || !this.reservation.overtime_charge) return 0;
+            return this.reservation.overtime_charge;
+        },
+
+        formatMoney(amount) {
+            const value = amount || 0;
+            return 'S/ ' + value.toFixed(2);
+        },
+
+        isOvertimeEdited() {
+            const calculated = this.calculateOvertimeCharge();
+            const current = this.customOvertimeCharge || 0;
+            return Math.abs(current - calculated) > 0.01;
+        },
+
         async applyOvertimeCharge() {
             if (!this.reservation || this.isLoading) return;
             
