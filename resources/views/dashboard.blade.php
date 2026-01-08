@@ -109,8 +109,8 @@
     .status-occupied { background-color: #f0fdf4 !important; border-color: #bbf7d0 !important; }
     .status-occupied:hover { background-color: #dcfce7 !important; }
     
-    .status-expired { background-color: #fef2f2 !important; border-color: #fecaca !important; }
-    .status-expired:hover { background-color: #fee2e2 !important; }
+    .status-expired { background-color: #fee2e2 !important; border-color: #f87171 !important; border-width: 3px !important; }
+    .status-expired:hover { background-color: #fecaca !important; }
     
     .status-cleaning { background-color: #fefce8 !important; border-color: #fef08a !important; }
     .status-cleaning:hover { background-color: #fef9c3 !important; }
@@ -162,6 +162,20 @@ function dashboardApp() {
                 this.selectedRoomPrice = event.detail.roomPrice;
                 this.openModal(event.detail.roomId, event.detail.hasReservation, event.detail.status);
             });
+        },
+
+        getOvertimeDisplay() {
+            if (!this.reservation || !this.reservation.check_out_at) return '0h 0m';
+            
+            const checkoutAt = new Date(this.reservation.check_out_at);
+            const now = new Date();
+            const diff = now - checkoutAt;
+            
+            if (diff <= 0) return '0h 0m';
+            
+            const hours = Math.floor(diff / 3600000);
+            const minutes = Math.floor((diff % 3600000) / 60000);
+            return `${hours}h ${minutes}m`;
         },
 
         openModal(roomId, hasReservation = false, status = 'available') {
@@ -386,6 +400,7 @@ function dashboardApp() {
             document.querySelectorAll('[data-reservation-id]').forEach(room => {
                 const timeElement = room.querySelector('.remaining-time');
                 const progressBar = room.querySelector('.progress-bar');
+                const overtimeBadge = room.querySelector('.overtime-badge');
                 
                 if (timeElement && timeElement.dataset.checkoutAt) {
                     const checkoutAt = new Date(timeElement.dataset.checkoutAt);
@@ -397,6 +412,14 @@ function dashboardApp() {
                         if (progressBar) progressBar.style.width = '100%';
                         room.classList.remove('status-occupied', 'status-cleaning', 'status-available');
                         room.classList.add('status-expired');
+                        
+                        // Update overtime badge
+                        if (overtimeBadge) {
+                            const overtime = Math.abs(diff);
+                            const hours = Math.floor(overtime / 3600000);
+                            const minutes = Math.floor((overtime % 3600000) / 60000);
+                            overtimeBadge.textContent = `+${hours}h ${minutes}m`;
+                        }
                     } else {
                         const hours = Math.floor(diff / 3600000);
                         const minutes = Math.floor((diff % 3600000) / 60000);

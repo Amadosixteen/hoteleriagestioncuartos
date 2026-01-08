@@ -16,6 +16,11 @@
                 <span x-text="isEditing ? 'Editar Reserva' : 'Nueva Reserva'"></span>
                 <span class="text-xs px-2 py-0.5 bg-blue-100 text-blue-700 rounded-full" x-show="selectedRoomType" x-text="selectedRoomType"></span>
                 <span class="text-xs px-2 py-0.5 bg-green-100 text-green-700 rounded-full font-bold" x-show="selectedRoomPrice" x-text="'S/ ' + parseFloat(selectedRoomPrice).toFixed(2)"></span>
+                <!-- Overtime Badge for Expired Rooms -->
+                <span x-show="currentRoomStatus === 'expired' && reservation" 
+                      class="text-xs px-3 py-1 bg-red-600 text-white rounded-full font-black shadow-md animate-pulse"
+                      x-text="'⚠️ Tiempo extra: ' + getOvertimeDisplay()">
+                </span>
             </h3>
             <button @click="closeModal()" class="text-gray-400 hover:text-gray-600">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
