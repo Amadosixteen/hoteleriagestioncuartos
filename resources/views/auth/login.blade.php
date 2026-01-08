@@ -33,14 +33,14 @@
             <div class="absolute bottom-0 left-0 w-80 h-80 bg-orange-400/10 rounded-full blur-3xl"></div>
             
             <!-- Logo & Brand -->
-            <div class="relative z-10 fade-in">
-                <div class="flex items-center space-x-4 mb-8">
-                    <img src="{{ asset('images/island-hotel-logo.jpg') }}" alt="Island Hotel" class="w-20 h-20 rounded-2xl shadow-2xl float-animation">
-                    <div>
-                        <h1 class="text-white text-3xl font-black tracking-tight">ISLAND HOTEL</h1>
-                        <p class="text-blue-100 text-sm font-medium">Tu hotel, en tu bolsillo</p>
-                    </div>
+            <div class="relative z-10 fade-in text-center">
+                <div class="inline-block mb-6">
+                    <img src="{{ asset('images/island-hotel-logo.jpg') }}" 
+                         alt="Island Hotel" 
+                         class="w-32 h-32 rounded-full shadow-2xl object-cover border-4 border-white/20 float-animation mx-auto">
                 </div>
+                <h1 class="text-white text-4xl font-black tracking-tight mb-2">ISLAND HOTEL</h1>
+                <p class="text-blue-200 text-lg font-medium">Tu hotel, en tu bolsillo</p>
             </div>
 
             <!-- Main Message -->
