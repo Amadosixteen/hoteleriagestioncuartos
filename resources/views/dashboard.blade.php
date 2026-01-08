@@ -153,6 +153,8 @@
         currentRoomStatus: 'available',
         editingOvertimeCharge: false,
         customOvertimeCharge: 0,
+        showCustomPriceInput: false,
+        customPrice: null,
 
         init() {
             // Update room status every 30 seconds
@@ -293,6 +295,8 @@
             this.reservation = null;
             this.errorMessage = '';
             this.isLoading = false;
+            this.showCustomPriceInput = false;
+            this.customPrice = null;
             this.resetForm();
         },
 
@@ -363,7 +367,8 @@
             const formData = {
                 room_id: this.selectedRoom,
                 duration_hours: this.duration_hours,
-                guests: this.guests
+                guests: this.guests,
+                price: this.showCustomPriceInput ? this.customPrice : null
             };
 
             const url = this.isEditing 

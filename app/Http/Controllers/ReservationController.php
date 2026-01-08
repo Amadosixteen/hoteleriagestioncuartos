@@ -53,14 +53,15 @@ class ReservationController extends Controller
             }
 
             // Create reservation
+            $reservationPrice = $validated['price'] ?? $room->price;
             $reservation = Reservation::create([
                 'room_id' => $room->id,
                 'check_in_at' => $checkInAt,
                 'check_out_at' => $checkOutAt,
                 'duration_hours' => $validated['duration_hours'],
                 'has_vehicle' => $hasVehicle,
-                'price' => $room->price,
-                'total_price' => $room->price,
+                'price' => $reservationPrice,
+                'total_price' => $reservationPrice,
                 'status' => 'active',
                 'tenant_id' => $room->floor->tenant_id,
             ]);

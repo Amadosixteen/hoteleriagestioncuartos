@@ -15,7 +15,33 @@
             <h3 class="text-xl font-semibold text-gray-900 flex items-center gap-2">
                 <span x-text="isEditing ? 'Editar Reserva' : 'Nueva Reserva'"></span>
                 <span class="text-xs px-2 py-0.5 bg-blue-100 text-blue-700 rounded-full" x-show="selectedRoomType" x-text="selectedRoomType"></span>
-                <span class="text-xs px-2 py-0.5 bg-green-100 text-green-700 rounded-full font-bold" x-show="selectedRoomPrice" x-text="'S/ ' + parseFloat(selectedRoomPrice).toFixed(2)"></span>
+                <div class="flex items-center gap-2">
+                    <span class="text-xs px-2 py-0.5 bg-green-100 text-green-700 rounded-full font-bold" 
+                          x-show="selectedRoomPrice && !showCustomPriceInput" 
+                          x-text="'S/ ' + parseFloat(selectedRoomPrice).toFixed(2)"></span>
+                    
+                    <div x-show="showCustomPriceInput" class="relative">
+                        <span class="absolute left-2 top-1/2 -translate-y-1/2 text-green-700 text-xs font-bold">S/</span>
+                        <input type="number" 
+                               step="0.01" 
+                               x-model="customPrice" 
+                               class="w-24 pl-6 pr-2 py-0.5 border border-green-300 rounded-full text-xs font-bold text-green-700 focus:ring-2 focus:ring-green-500"
+                               placeholder="0.00">
+                    </div>
+
+                    <button type="button" 
+                            x-show="!isEditing && !showCustomPriceInput"
+                            @click="showCustomPriceInput = true; customPrice = selectedRoomPrice"
+                            class="text-[10px] text-blue-600 hover:text-blue-800 underline font-medium">
+                        ✏️ (Otro precio)
+                    </button>
+                    <button type="button" 
+                            x-show="!isEditing && showCustomPriceInput"
+                            @click="showCustomPriceInput = false; customPrice = null"
+                            class="text-[10px] text-red-600 hover:text-red-800 underline font-medium">
+                        Cancelar
+                    </button>
+                </div>
                 <!-- Overtime Badge for Expired Rooms -->
                 <span x-show="currentRoomStatus === 'expired' && reservation" 
                       class="text-xs px-3 py-1 bg-red-600 text-white rounded-full font-black shadow-md animate-pulse"
