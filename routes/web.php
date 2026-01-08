@@ -23,7 +23,6 @@ Route::middleware(['auth', 'tenant'])->group(function () {
     Route::post('/reservations/{id}/checkout', [ReservationController::class, 'checkout'])->name('reservations.checkout');
     
     Route::get('/api/rooms/status', [ReservationController::class, 'getRoomStatus'])->name('api.rooms.status');
-    Route::get('/api/dashboard/data', [DashboardController::class, 'apiData'])->name('api.dashboard.data');
     Route::post('/rooms/{id}/toggle-cleaning', [ReservationController::class, 'toggleCleaning'])->name('rooms.toggle-cleaning');
     
     // Management Routes (General para dueños de hotel)
@@ -62,11 +61,6 @@ Route::middleware(['auth', 'tenant'])->group(function () {
     });
     
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
-
-    // Vue.js Catch-all Route
-    Route::get('/v/{any?}', function () {
-        return view('vue-app');
-    })->where('any', '.*')->name('vue.app');
 });
 // Temporary Reset Route
 Route::get('/saas/secret-db-reset', function () {

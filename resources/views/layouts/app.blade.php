@@ -21,7 +21,6 @@
                     <h1 class="text-xl font-semibold text-gray-900">Sistema de Gestión Hotelera</h1>
                     <div class="hidden sm:flex space-x-4">
                         <a href="{{ route('dashboard') }}" class="text-sm font-medium text-gray-700 hover:text-gray-900">Dashboard</a>
-                        <a href="{{ route('vue.app', ['any' => 'dashboard']) }}" class="text-sm font-bold text-blue-600 hover:text-blue-800">Dashboard (Vue ⚡)</a>
                         @if(auth()->user()->isSuperAdmin())
                         <a href="{{ route('hotels.index') }}" class="text-sm font-medium text-gray-700 hover:text-gray-900">Gestionar Hoteles</a>
                         @endif
