@@ -13,22 +13,50 @@
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <!-- Formulario -->
-        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-            <h3 class="text-lg font-medium text-gray-900 mb-4">Añadir Nuevo Piso</h3>
+        <div class="bg-white rounded-2xl shadow-sm border-2 border-gray-100 p-6 md:p-8 h-fit">
+            <div class="mb-6">
+                <h3 class="text-xl font-black text-[#1e3a8a] uppercase tracking-tight">Añadir Nuevo Piso</h3>
+                <p class="text-xs text-gray-500 mt-1">Completa los datos para crear un piso</p>
+            </div>
+            
             <form action="{{ route('floors.store') }}" method="POST">
                 @csrf
-                <div class="space-y-4">
-                    <div>
-                        <label for="floor_number" class="block text-sm font-medium text-gray-700">Número de Piso</label>
-                        <input type="number" name="floor_number" id="floor_number" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" placeholder="Ej. 1">
+                <div class="space-y-6">
+                    <!-- Floor Number -->
+                    <div class="bg-gray-50 rounded-xl p-4 border border-gray-200">
+                        <label for="floor_number" class="flex items-center text-sm font-bold text-gray-700 mb-2">
+                            <svg class="w-5 h-5 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14"></path>
+                            </svg>
+                            Número de Piso
+                        </label>
+                        <input type="number" name="floor_number" id="floor_number" required 
+                               class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-base font-bold text-gray-900" 
+                               placeholder="Ej. 1, 2, 3...">
+                        <p class="text-xs text-gray-500 mt-2">🔢 Ingresa el número del piso (1 = primer piso, 2 = segundo piso, etc.)</p>
                     </div>
-                    <div>
-                        <label for="name" class="block text-sm font-medium text-gray-700">Nombre del Piso</label>
-                        <input type="text" name="name" id="name" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" placeholder="Ej. Primer Piso">
+
+                    <!-- Floor Name -->
+                    <div class="bg-gray-50 rounded-xl p-4 border border-gray-200">
+                        <label for="name" class="flex items-center text-sm font-bold text-gray-700 mb-2">
+                            <svg class="w-5 h-5 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                            </svg>
+                            Nombre del Piso
+                        </label>
+                        <input type="text" name="name" id="name" required 
+                               class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-base font-bold text-gray-900" 
+                               placeholder="Ej. Primer Piso, Segundo Piso...">
+                        <p class="text-xs text-gray-500 mt-2">📝 Dale un nombre descriptivo al piso para identificarlo fácilmente</p>
                     </div>
-                    <div>
-                        <button type="submit" class="w-full inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                            Crear Piso
+
+                    <!-- Submit Button -->
+                    <div class="pt-2">
+                        <button type="submit" class="w-full inline-flex justify-center items-center py-3 px-4 border border-transparent shadow-lg text-base font-black rounded-xl text-white bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transform hover:scale-105 transition-all">
+                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                            </svg>
+                            CREAR PISO
                         </button>
                     </div>
                 </div>
