@@ -278,22 +278,27 @@ class ReservationController extends Controller
             return response()->json(['error' => 'La reserva no está vencida'], 422);
         }
 
-        // Get tenant's overtime rate
-        $tenant = auth()->user()->tenant;
-        $overtimeRate = $tenant->overtime_rate_per_hour ?? 0;
-
-        if ($overtimeRate <= 0) {
-            return response()->json(['error' => 'No se ha configurado una tarifa de tiempo extra'], 422);
-        }
-
         // Calculate overtime hours
         $checkoutAt = $reservation->check_out_at;
         $now = now();
         $overtimeMinutes = $checkoutAt->diffInMinutes($now);
         $overtimeHours = round($overtimeMinutes / 60, 2);
 
-        // Calculate charge
-        $overtimeCharge = round($overtimeHours * $overtimeRate, 2);
+        // Use custom charge if provided, otherwise calculate
+        if ($request->has('custom_charge')) {
+            $overtimeCharge = round($request->input('custom_charge'), 2);
+        } else {
+            // Get tenant's overtime rate
+            $tenant = auth()->user()->tenant;
+            $overtimeRate = $tenant->overtime_rate_per_hour ?? 0;
+
+            if ($overtimeRate <= 0) {
+                return response()->json(['error' => 'No se ha configurado una tarifa de tiempo extra'], 422);
+            }
+
+            // Calculate charge
+            $overtimeCharge = round($overtimeHours * $overtimeRate, 2);
+        }
 
         // Update reservation
         $reservation->update([

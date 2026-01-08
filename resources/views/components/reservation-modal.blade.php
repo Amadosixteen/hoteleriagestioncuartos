@@ -55,8 +55,31 @@
                             <p class="text-2xl font-black text-red-600" x-text="getOvertimeDisplay()">0h 0m</p>
                         </div>
                         <div class="bg-white rounded-lg p-3">
-                            <p class="text-xs text-gray-600 mb-1">Cobro Calculado</p>
-                            <p class="text-2xl font-black text-red-600" x-text="'S/ ' + calculateOvertimeCharge().toFixed(2)">S/ 0.00</p>
+                            <p class="text-xs text-gray-600 mb-1 flex items-center justify-between">
+                                <span>Cobro a Aplicar</span>
+                                <button type="button" @click="editingOvertimeCharge = !editingOvertimeCharge" class="text-blue-600 hover:text-blue-800">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path>
+                                    </svg>
+                                </button>
+                            </p>
+                            <div x-show="!editingOvertimeCharge">
+                                <p class="text-2xl font-black text-red-600" x-text="'S/ ' + customOvertimeCharge.toFixed(2)">S/ 0.00</p>
+                                <p class="text-[10px] text-gray-500 mt-1" x-show="customOvertimeCharge !== calculateOvertimeCharge()">
+                                    (Editado manualmente)
+                                </p>
+                            </div>
+                            <div x-show="editingOvertimeCharge" class="relative">
+                                <span class="absolute left-2 top-1/2 -translate-y-1/2 text-gray-500 text-sm">S/</span>
+                                <input 
+                                    type="number" 
+                                    step="0.01" 
+                                    min="0"
+                                    x-model.number="customOvertimeCharge"
+                                    @blur="editingOvertimeCharge = false"
+                                    class="w-full pl-8 pr-2 py-1 border border-blue-300 rounded text-xl font-black text-red-600 focus:ring-2 focus:ring-blue-500"
+                                >
+                            </div>
                         </div>
                     </div>
 

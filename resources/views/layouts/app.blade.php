@@ -46,7 +46,7 @@
                                 <a href="{{ route('rooms.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 {{ request()->routeIs('rooms.*') ? 'text-blue-600 font-bold' : '' }}">Habitaciones</a>
                                 <a href="{{ route('rates.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 {{ request()->routeIs('rates.*') ? 'text-blue-600 font-bold' : '' }}">Tarifas</a>
                                 <hr class="my-2 border-gray-100">
-                                <a href="{{ route('settings.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 {{ request()->routeIs('settings.*') ? 'text-blue-600 font-bold' : '' }}">⚙️ Configuración</a>
+                                <a href="{{ route('settings.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 {{ request()->routeIs('settings.*') ? 'text-blue-600 font-bold' : '' }}">⏱️ Horas Extras</a>
                             </div>
                         </div>
                         

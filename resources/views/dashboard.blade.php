@@ -148,6 +148,8 @@ function dashboardApp() {
         isLoading: false,
         errorMessage: '',
         currentRoomStatus: 'available',
+        editingOvertimeCharge: false,
+        customOvertimeCharge: 0,
 
         init() {
             // Update room status every 30 seconds
@@ -210,7 +212,10 @@ function dashboardApp() {
                         'Content-Type': 'application/json',
                         'Accept': 'application/json',
                         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-                    }
+                    },
+                    body: JSON.stringify({
+                        custom_charge: this.customOvertimeCharge
+                    })
                 });
 
                 const data = await response.json();
@@ -221,7 +226,7 @@ function dashboardApp() {
                     this.reservation.overtime_hours = data.overtime_hours;
                     this.reservation.total_price = data.new_total;
                     
-                    alert(`Cobro de tiempo extra aplicado correctamente:\n${data.overtime_hours.toFixed(2)} horas × S/ ${(data.overtime_charge / data.overtime_hours).toFixed(2)} = S/ ${data.overtime_charge.toFixed(2)}`);
+                    alert(`Cobro de tiempo extra aplicado correctamente:\n${data.overtime_hours.toFixed(2)} horas\nCobro: S/ ${data.overtime_charge.toFixed(2)}`);
                 } else {
                     this.errorMessage = data.error || 'Error al aplicar el cobro de tiempo extra';
                 }
@@ -237,6 +242,7 @@ function dashboardApp() {
             this.selectedRoom = roomId;
             this.isEditing = hasReservation;
             this.currentRoomStatus = status;
+            this.editingOvertimeCharge = false;
             
             if (hasReservation) {
                 this.loadReservation(roomId);
@@ -245,6 +251,11 @@ function dashboardApp() {
             }
             
             this.showModal = true;
+            
+            // Initialize custom overtime charge after a short delay to ensure reservation is loaded
+            setTimeout(() => {
+                this.customOvertimeCharge = this.calculateOvertimeCharge();
+            }, 100);
         },
 
         closeModal() {
