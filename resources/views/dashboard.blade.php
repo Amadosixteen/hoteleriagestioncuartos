@@ -348,8 +348,8 @@
                         vehicle_plate: g.vehicle_plate || ''
                     }));
 
-                    // Initialize overtime charge once data is loaded
-                    this.customOvertimeCharge = this.calculateOvertimeCharge();
+                    // Initialize overtime charge once data is loaded (rounded to 2 decimals)
+                    this.customOvertimeCharge = Math.round(this.calculateOvertimeCharge() * 100) / 100;
                 } catch (error) {
                     console.error('Error loading reservation:', error);
                 }
