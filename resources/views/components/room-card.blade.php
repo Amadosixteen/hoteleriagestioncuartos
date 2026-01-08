@@ -24,9 +24,9 @@
     @endif
     @click="window.dispatchEvent(new CustomEvent('open-reservation-modal', { detail: { roomId: {{ $room->id }}, roomType: '{{ $room->type }}', roomPrice: {{ $room->price }}, hasReservation: {{ $hasReservation ? 'true' : 'false' }}, status: '{{ $room->status }}' } }))"
 >
-    <!-- Overtime Badge (for expired rooms) -->
-    @if($room->status === 'expired' && $hasReservation)
-    <div class="absolute top-1 left-1.5 px-1.5 py-0.5 bg-red-600 rounded-md text-[8px] font-black text-white shadow-md border border-red-700 tabular-nums overtime-badge"
+    <!-- Overtime Badge (for occupied/expired rooms) -->
+    @if($hasReservation)
+    <div class="absolute top-1 left-1.5 px-1.5 py-0.5 bg-red-600 rounded-md text-[8px] font-black text-white shadow-md border border-red-700 tabular-nums overtime-badge transition-opacity duration-300 {{ $room->status === 'expired' ? 'opacity-100' : 'opacity-0' }}"
          data-checkout-at="{{ $reservation->check_out_at->toIso8601String() }}">
         +0h 0m
     </div>

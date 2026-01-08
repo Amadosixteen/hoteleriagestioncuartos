@@ -12,7 +12,22 @@ class DashboardController extends Controller
      */
     public function index()
     {
-        $floors = Floor::where('tenant_id', auth()->user()->tenant_id)
+        $floors = $this->getDashboardData();
+        return view('dashboard', compact('floors'));
+    }
+
+    public function apiData()
+    {
+        $floors = $this->getDashboardData();
+        return response()->json([
+            'floors' => $floors,
+            'overtime_rate' => auth()->user()->tenant->overtime_rate_per_hour ?? 0
+        ]);
+    }
+
+    private function getDashboardData()
+    {
+        return Floor::where('tenant_id', auth()->user()->tenant_id)
             ->with([
                 'rooms' => function ($query) {
                     $query->orderBy('position', 'asc');
@@ -24,7 +39,5 @@ class DashboardController extends Controller
             ])
             ->orderBy('floor_number')
             ->get();
-        
-        return view('dashboard', compact('floors'));
     }
 }

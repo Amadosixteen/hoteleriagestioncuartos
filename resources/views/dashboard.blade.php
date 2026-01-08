@@ -511,12 +511,14 @@
                         room.classList.remove('status-occupied', 'status-cleaning', 'status-available');
                         room.classList.add('status-expired');
                         
-                        // Update overtime badge
+                        // Update and show overtime badge
                         if (overtimeBadge) {
                             const overtime = Math.abs(diff);
                             const hours = Math.floor(overtime / 3600000);
                             const minutes = Math.floor((overtime % 3600000) / 60000);
                             overtimeBadge.textContent = `+${hours}h ${minutes}m`;
+                            overtimeBadge.classList.remove('opacity-0');
+                            overtimeBadge.classList.add('opacity-100');
                         }
                     } else {
                         const hours = Math.floor(diff / 3600000);
