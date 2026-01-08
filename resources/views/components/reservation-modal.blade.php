@@ -39,7 +39,7 @@
                 </div>
 
                 <!-- Overtime Charge Section (for expired reservations) -->
-                <div x-show="currentRoomStatus === 'expired' && reservation && !reservation.overtime_charge" class="mb-6 bg-red-50 border-2 border-red-300 rounded-xl p-5">
+                <div x-show="currentRoomStatus === 'expired' && isEditing && (!reservation || !reservation.overtime_charge)" class="mb-6 bg-red-50 border-2 border-red-300 rounded-xl p-5">
                     <div class="flex items-start justify-between mb-4">
                         <div class="flex items-center space-x-2">
                             <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
