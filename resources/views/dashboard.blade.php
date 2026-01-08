@@ -284,10 +284,7 @@
             
             this.showModal = true;
             
-            // Initialize custom overtime charge after reservation is loaded
-            setTimeout(() => {
-                this.customOvertimeCharge = this.calculateOvertimeCharge();
-            }, 200);
+            this.showModal = true;
         },
 
         closeModal() {
@@ -350,6 +347,9 @@
                         gender: g.gender || '',
                         vehicle_plate: g.vehicle_plate || ''
                     }));
+
+                    // Initialize overtime charge once data is loaded
+                    this.customOvertimeCharge = this.calculateOvertimeCharge();
                 } catch (error) {
                     console.error('Error loading reservation:', error);
                 }
