@@ -73,6 +73,36 @@ class User extends Authenticatable
     }
 
     /**
+     * Get hours remaining in subscription.
+     */
+    public function getHoursRemainingAttribute()
+    {
+        if (!$this->subscription_expires_at) return 0;
+        
+        $now = \Carbon\Carbon::now();
+        $expires = \Carbon\Carbon::parse($this->subscription_expires_at);
+        
+        if ($now->greaterThan($expires)) return 0;
+        
+        return (int) ceil($now->diffInHours($expires));
+    }
+
+    /**
+     * Get formatted time remaining display (shows hours if < 24hrs, otherwise days).
+     */
+    public function getTimeRemainingDisplayAttribute()
+    {
+        $hours = $this->hours_remaining;
+        
+        if ($hours < 24) {
+            return $hours . ' hr' . ($hours != 1 ? 's' : '');
+        }
+        
+        $days = $this->days_remaining;
+        return $days . ' día' . ($days != 1 ? 's' : '');
+    }
+
+    /**
      * Check if the user has an active subscription.
      */
     public function hasActiveSubscription(): bool

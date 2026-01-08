@@ -83,7 +83,7 @@
                             <div class="flex items-center space-x-2">
                                 <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Mi Suscripción</span>
                                 <span class="text-xs font-bold {{ auth()->user()->days_remaining <= 5 ? 'text-red-600' : 'text-green-600' }}">
-                                    {{ auth()->user()->days_remaining }} días
+                                    {{ auth()->user()->time_remaining_display }}
                                 </span>
                             </div>
                             <div class="w-32 h-1.5 bg-gray-200 rounded-full overflow-hidden">
@@ -178,7 +178,7 @@
                         <div class="flex justify-between items-center mb-2">
                             <span class="text-sm font-bold text-gray-700">Mi Suscripción</span>
                             <span class="text-xs font-bold {{ auth()->user()->days_remaining <= 5 ? 'text-red-600' : 'text-green-600' }}">
-                                {{ auth()->user()->days_remaining }} días restantes
+                                {{ auth()->user()->time_remaining_display }} restantes
                             </span>
                         </div>
                         <div class="w-full h-2 bg-gray-200 rounded-full overflow-hidden mb-3">
