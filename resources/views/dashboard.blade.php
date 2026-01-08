@@ -202,22 +202,23 @@ function dashboardApp() {
 
         getOvertimeHours() {
             if (!this.reservation || !this.reservation.overtime_hours) return '0.00';
-            return this.reservation.overtime_hours.toFixed(2);
+            const hours = parseFloat(this.reservation.overtime_hours);
+            return hours.toFixed(2);
         },
 
         getOvertimeChargeAmount() {
             if (!this.reservation || !this.reservation.overtime_charge) return 0;
-            return this.reservation.overtime_charge;
+            return parseFloat(this.reservation.overtime_charge);
         },
 
         formatMoney(amount) {
-            const value = amount || 0;
+            const value = parseFloat(amount) || 0;
             return 'S/ ' + value.toFixed(2);
         },
 
         isOvertimeEdited() {
             const calculated = this.calculateOvertimeCharge();
-            const current = this.customOvertimeCharge || 0;
+            const current = parseFloat(this.customOvertimeCharge) || 0;
             return Math.abs(current - calculated) > 0.01;
         },
 

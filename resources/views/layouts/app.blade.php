@@ -157,6 +157,7 @@
                         <a href="{{ route('floors.index') }}" class="block px-3 py-2 rounded-md text-sm font-medium text-gray-600 hover:bg-gray-50 {{ request()->routeIs('floors.*') ? 'text-blue-600 font-bold' : '' }}">Pisos</a>
                         <a href="{{ route('rooms.index') }}" class="block px-3 py-2 rounded-md text-sm font-medium text-gray-600 hover:bg-gray-50 {{ request()->routeIs('rooms.*') ? 'text-blue-600 font-bold' : '' }}">Habitaciones</a>
                         <a href="{{ route('rates.index') }}" class="block px-3 py-2 rounded-md text-sm font-medium text-gray-600 hover:bg-gray-50 {{ request()->routeIs('rates.*') ? 'text-blue-600 font-bold' : '' }}">Tarifas</a>
+                        <a href="{{ route('settings.index') }}" class="block px-3 py-2 rounded-md text-sm font-medium text-gray-600 hover:bg-gray-50 {{ request()->routeIs('settings.*') ? 'text-blue-600 font-bold' : '' }}">⏱️ Horas Extras</a>
                     </div>
                 </div>
                 
