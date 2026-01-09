@@ -33,8 +33,8 @@
     @endif
 
     <!-- Room Price Badge -->
-    <div class="absolute top-1 right-1.5 px-1.5 py-0.5 bg-white/40 rounded-md text-[8px] font-black text-gray-400/80 shadow-sm border border-gray-100/50 tabular-nums">
-        S/ {{ number_format($room->price, 0) }}
+    <div class="absolute top-1 right-1.5 px-1.5 py-0.5 bg-white/40 rounded-md text-[8px] font-black {{ $hasReservation ? 'text-green-700 bg-green-50/80 border-green-200' : 'text-gray-400/80 border-gray-100/50' }} shadow-sm border tabular-nums">
+        S/ {{ number_format($hasReservation ? $reservation->price : $room->price, 0) }}
     </div>
 
     <!-- Room Number & Type -->

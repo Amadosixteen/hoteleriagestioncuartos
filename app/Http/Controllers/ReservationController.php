@@ -27,6 +27,7 @@ class ReservationController extends Controller
             'guests.*.last_name' => 'required|string',
             'guests.*.gender' => 'nullable|in:masculino,femenino,otro',
             'guests.*.vehicle_plate' => 'nullable|string',
+            'price' => 'nullable|numeric|min:0',
         ]);
 
         $room = Room::findOrFail($validated['room_id']);
@@ -118,6 +119,7 @@ class ReservationController extends Controller
             'guests.*.last_name' => 'required|string',
             'guests.*.gender' => 'nullable|in:masculino,femenino,otro',
             'guests.*.vehicle_plate' => 'nullable|string',
+            'price' => 'nullable|numeric|min:0',
         ]);
 
         $reservation = Reservation::findOrFail($id);
@@ -131,7 +133,8 @@ class ReservationController extends Controller
                 $reservation->update([
                     'check_out_at' => $checkOutAt,
                     'duration_hours' => $durationHours,
-                    'total_price' => $reservation->price,
+                    'price' => $validated['price'] ?? $reservation->price,
+                    'total_price' => ($validated['price'] ?? $reservation->price) + ($reservation->overtime_charge ?? 0),
                 ]);
             }
 

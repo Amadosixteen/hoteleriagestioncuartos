@@ -16,28 +16,39 @@
                 <span x-text="isEditing ? 'Editar Reserva' : 'Nueva Reserva'"></span>
                 <span class="text-xs px-2 py-0.5 bg-blue-100 text-blue-700 rounded-full" x-show="selectedRoomType" x-text="selectedRoomType"></span>
                 <div class="flex items-center gap-2">
-                    <span class="text-xs px-2 py-0.5 bg-green-100 text-green-700 rounded-full font-bold" 
-                          x-show="selectedRoomPrice && !showCustomPriceInput" 
-                          x-text="'S/ ' + parseFloat(selectedRoomPrice).toFixed(2)"></span>
-                    
-                    <div x-show="showCustomPriceInput" class="relative">
-                        <span class="absolute left-2 top-1/2 -translate-y-1/2 text-green-700 text-xs font-bold">S/</span>
-                        <input type="number" 
-                               step="0.01" 
-                               x-model="customPrice" 
-                               class="w-24 pl-6 pr-2 py-0.5 border border-green-300 rounded-full text-xs font-bold text-green-700 focus:ring-2 focus:ring-green-500"
-                               placeholder="0.00">
+                    <div class="flex flex-col items-start">
+                        <span class="text-[10px] text-gray-500 font-medium" x-show="showCustomPriceInput || (isEditing && parseFloat(selectedRoomPrice) !== parseFloat(reservation?.price))">Precio Estándar</span>
+                        <span class="text-xs px-2 py-0.5 bg-green-100 text-green-700 rounded-full font-bold" 
+                              :class="(showCustomPriceInput || (isEditing && parseFloat(selectedRoomPrice) !== parseFloat(reservation?.price))) ? 'line-through opacity-50' : ''"
+                              x-show="selectedRoomPrice" 
+                              x-text="'S/ ' + parseFloat(selectedRoomPrice).toFixed(2)"></span>
+                    </div>
+
+                    <div x-show="showCustomPriceInput || (isEditing && parseFloat(selectedRoomPrice) !== parseFloat(reservation?.price))" class="flex flex-col items-start border-l pl-2 border-gray-200">
+                        <span class="text-[10px] text-green-700 font-bold">Nuevo Precio</span>
+                        <div x-show="!isEditing || showCustomPriceInput" class="relative">
+                            <span class="absolute left-2 top-1/2 -translate-y-1/2 text-green-700 text-xs font-bold">S/</span>
+                            <input type="number" 
+                                   step="0.01" 
+                                   x-model="customPrice" 
+                                   @input="if(isEditing && reservation) reservation.price = customPrice"
+                                   class="w-24 pl-6 pr-2 py-0.5 border border-green-300 rounded-full text-xs font-bold text-green-700 focus:ring-2 focus:ring-green-500"
+                                   placeholder="0.00">
+                        </div>
+                        <span x-show="isEditing && !showCustomPriceInput" 
+                              class="text-xs px-2 py-0.5 bg-blue-100 text-blue-700 rounded-full font-black"
+                              x-text="'S/ ' + parseFloat(reservation?.price || 0).toFixed(2)"></span>
                     </div>
 
                     <button type="button" 
-                            x-show="!isEditing && !showCustomPriceInput"
-                            @click="showCustomPriceInput = true; customPrice = selectedRoomPrice"
+                            x-show="!showCustomPriceInput"
+                            @click="showCustomPriceInput = true; customPrice = (isEditing && reservation ? reservation.price : selectedRoomPrice)"
                             class="text-[10px] text-blue-600 hover:text-blue-800 underline font-medium">
                         ✏️ (Otro precio)
                     </button>
                     <button type="button" 
-                            x-show="!isEditing && showCustomPriceInput"
-                            @click="showCustomPriceInput = false; customPrice = null"
+                            x-show="showCustomPriceInput"
+                            @click="showCustomPriceInput = false; if(!isEditing) customPrice = null"
                             class="text-[10px] text-red-600 hover:text-red-800 underline font-medium">
                         Cancelar
                     </button>
