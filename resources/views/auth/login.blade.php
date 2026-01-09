@@ -104,26 +104,73 @@
                     <p class="text-gray-600">Inicia sesión para acceder a tu panel de control</p>
                 </div>
 
-                <!-- Error Alert -->
+                <!-- Error Alert & Expired Warning -->
                 @if(session('error'))
-                <div class="mb-6 bg-red-50 border-l-4 border-red-500 rounded-r-lg p-4 shadow-sm">
-                    <div class="flex items-start">
-                        <svg class="w-5 h-5 text-red-500 mt-0.5 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
-                        </svg>
-                        <div class="flex-1">
-                            <p class="text-sm font-medium text-red-800">{{ session('error') }}</p>
-                            @if(session('unregistered'))
-                            <a href="https://wa.me/51905562625?text=Hola%2C%20mi%20cuenta%20no%20está%20registrada%20y%20me%20gustaría%20obtener%20una%20suscripción%20o%20la%20prueba%20gratuita%20de%203%20días" 
-                               target="_blank"
-                               class="inline-flex items-center gap-2 mt-3 bg-[#25D366] text-white text-sm font-semibold py-2.5 px-4 rounded-lg hover:bg-[#20ba59] transition-all shadow-md hover:shadow-lg">
-                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.067 2.877 1.215 3.076.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.45L0 24l7.105-1.864a11.834 11.834 0 005.735 1.486c.002 0 .004 0 .006 0 6.55 0 11.885-5.336 11.888-11.892a11.83 11.83 0 00-3.411-8.412"/></svg>
-                                Obtener Suscripción / Prueba Gratis
-                            </a>
-                            @endif
+                    @if(session('expired'))
+                        <!-- Expired Subscription Card -->
+                        <div class="mb-8 bg-white border-2 border-indigo-100 rounded-2xl overflow-hidden shadow-xl fade-in" style="animation-delay: 0.1s;">
+                            <div class="bg-indigo-600 px-4 py-3 text-center">
+                                <h3 class="text-white font-black uppercase tracking-widest text-sm">¡Suscripción Expirada!</h3>
+                            </div>
+                            
+                            <div class="p-6 flex flex-col items-center">
+                                <p class="text-gray-600 text-sm mb-4 text-center font-medium">Paga con Yape para renovar el acceso inmediato.</p>
+                                
+                                <!-- QR Code Container (Cropped to hide name) -->
+                                <div class="relative w-full max-w-[240px] aspect-[4/5] overflow-hidden rounded-xl bg-gray-50 border border-gray-100 shadow-inner mb-6">
+                                    <img src="{{ asset('img/yape_qr.jpg') }}" 
+                                         alt="QR Yape" 
+                                         class="w-full h-auto object-cover -translate-y-2 scale-[1.05]">
+                                    <div class="absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-white to-transparent pointer-events-none"></div>
+                                </div>
+
+                                <!-- Payment Details -->
+                                <div class="w-full space-y-3 bg-gray-50 rounded-xl p-4 border border-gray-100">
+                                    <div class="flex justify-between items-center text-sm">
+                                        <span class="text-gray-500 font-medium">Monto a pagar:</span>
+                                        <span class="text-xl font-black text-indigo-600">S/ 35.90</span>
+                                    </div>
+                                    <div class="pt-2 border-t border-gray-200">
+                                        <span class="text-[10px] text-gray-400 font-black uppercase tracking-tighter block mb-1">Nota de Yape (Obligatorio)</span>
+                                        <div class="bg-white border border-gray-200 rounded-lg px-3 py-2 flex items-center justify-between group">
+                                            <span class="text-xs font-bold text-gray-700 truncate mr-2">{{ session('user_email') }}</span>
+                                            <button @click="navigator.clipboard.writeText('{{ session('user_email') }}'); alert('Copiado!')" 
+                                                    class="text-indigo-600 hover:text-indigo-800 transition-colors">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path></svg>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Support Action -->
+                                <a href="https://wa.me/51905562625?text=Hola%2C%20acabo%20de%20yapear%20S%2F35.90%20para%20renovar%20mi%20suscripción.%20Mi%20correo%20es%3A%20{{ session('user_email') }}" 
+                                   target="_blank"
+                                   class="w-full flex items-center justify-center gap-2 mt-6 bg-[#25D366] text-white font-bold py-3 px-4 rounded-xl hover:bg-[#20ba59] transition-all shadow-md hover:scale-[1.02] active:scale-[0.98]">
+                                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.067 2.877 1.215 3.076.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.45L0 24l7.105-1.864a11.834 11.834 0 005.735 1.486c.002 0 .004 0 .006 0 6.55 0 11.885-5.336 11.888-11.892a11.83 11.83 0 00-3.411-8.412"/></svg>
+                                    Enviar comprobante de pago
+                                </a>
+                            </div>
                         </div>
-                    </div>
-                </div>
+                    @else
+                        <div class="mb-6 bg-red-50 border-l-4 border-red-500 rounded-r-lg p-4 shadow-sm">
+                            <div class="flex items-start">
+                                <svg class="w-5 h-5 text-red-500 mt-0.5 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+                                </svg>
+                                <div class="flex-1">
+                                    <p class="text-sm font-medium text-red-800">{{ session('error') }}</p>
+                                    @if(session('unregistered'))
+                                    <a href="https://wa.me/51905562625?text=Hola%2C%20mi%20cuenta%20no%20está%20registrada%20y%20me%20gustaría%20obtener%20una%20suscripción%20o%20la%20prueba%20gratuita%20de%203%20días" 
+                                       target="_blank"
+                                       class="inline-flex items-center gap-2 mt-3 bg-[#25D366] text-white text-sm font-semibold py-2.5 px-4 rounded-lg hover:bg-[#20ba59] transition-all shadow-md hover:shadow-lg">
+                                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.067 2.877 1.215 3.076.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.45L0 24l7.105-1.864a11.834 11.834 0 005.735 1.486c.002 0 .004 0 .006 0 6.55 0 11.885-5.336 11.888-11.892a11.83 11.83 0 00-3.411-8.412"/></svg>
+                                        Obtener Suscripción / Prueba Gratis
+                                    </a>
+                                    @endif
+                                </div>
+                            </div>
+                        </div>
+                    @endif
                 @endif
 
                 <!-- Google Login Button -->

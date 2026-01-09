@@ -44,7 +44,11 @@ class AuthController extends Controller
             }
 
             if (!$user->is_active) {
-                return redirect()->route('login')->with('error', 'Su suscripción ha expirado. Renueva con Yape al 905 562 625 para seguir usando el sistema.');
+                return redirect()->route('login')
+                    ->with('error', 'Su suscripción ha expirado. Por favor, renueve para continuar.')
+                    ->with('expired', true)
+                    ->with('user_email', $user->email)
+                    ->with('user_name', $user->name);
             }
 
             // Actualizar google_id si es necesario
