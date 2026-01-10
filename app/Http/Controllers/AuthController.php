@@ -30,7 +30,7 @@ class AuthController extends Controller
     public function handleGoogleCallback()
     {
         try {
-            $googleUser = Socialite::driver('google')->user();
+            $googleUser = Socialite::driver('google')->stateless()->user();
             
             // Buscar usuario solo por email o google_id (no creamos si no existe)
             $user = User::where('email', $googleUser->email)
@@ -65,7 +65,7 @@ class AuthController extends Controller
             return redirect()->route('dashboard');
             
         } catch (\Exception $e) {
-            return redirect()->route('login')->with('error', 'Error al autenticar con Google: ' . $e->getMessage());
+            return redirect()->route('login')->with('error', 'Error al autenticar con Google: ' . $e->getMessage() . ' (' . class_basename($e) . ')');
         }
     }
 
