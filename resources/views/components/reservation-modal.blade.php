@@ -12,10 +12,10 @@
     >
         <!-- Modal Header -->
         <div class="flex items-center justify-between p-6 border-b border-gray-200">
-            <h3 class="text-xl font-semibold text-gray-900 flex items-center gap-2">
+            <h3 class="text-xl font-semibold text-gray-900 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-2">
                 <span x-text="isEditing ? 'Editar Reserva' : 'Nueva Reserva'"></span>
-                <span class="text-xs px-2 py-0.5 bg-blue-100 text-blue-700 rounded-full" x-show="selectedRoomType" x-text="selectedRoomType"></span>
-                <div class="flex items-center gap-2">
+                <span class="text-xs px-2 py-0.5 bg-blue-100 text-blue-700 rounded-full w-fit" x-show="selectedRoomType" x-text="selectedRoomType"></span>
+                <div class="flex flex-wrap items-start sm:items-center gap-2">
                     <div class="flex flex-col items-start">
                         <span class="text-[10px] text-gray-500 font-medium" x-show="showCustomPriceInput || (isEditing && parseFloat(selectedRoomPrice) !== parseFloat(reservation?.price))">Precio Estándar</span>
                         <span class="text-xs px-2 py-0.5 bg-green-100 text-green-700 rounded-full font-bold" 
@@ -55,7 +55,7 @@
                 </div>
                 <!-- Overtime Badge for Expired Rooms -->
                 <span x-show="(currentRoomStatus === 'expired' || isTimeExpired()) && reservation" 
-                      class="text-xs px-3 py-1 bg-red-600 text-white rounded-full font-black shadow-md animate-pulse"
+                      class="text-xs px-3 py-1 bg-red-600 text-white rounded-full font-black shadow-md animate-pulse w-fit mt-2 sm:mt-0"
                       x-text="'⚠️ Tiempo extra: ' + getOvertimeDisplay()">
                 </span>
             </h3>

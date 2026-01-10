@@ -76,7 +76,7 @@
     <x-reservation-modal />
 
     <!-- Burbuja Flotante de WhatsApp Soporte -->
-    <div class="fixed bottom-6 right-6 z-[60] group">
+    <div x-show="!showModal" class="fixed bottom-6 right-6 z-[60] group">
         <div class="absolute bottom-full right-0 mb-4 w-60 opacity-0 group-hover:opacity-100 transition-all duration-300 pointer-events-none translate-y-2 group-hover:translate-y-0">
             <div class="bg-white border border-gray-100 shadow-2xl rounded-2xl p-4 scale-95 group-hover:scale-100 transition-transform origin-bottom-right">
                 <p class="text-sm font-bold text-gray-800 mb-1">¿Necesitas ayuda?</p>
