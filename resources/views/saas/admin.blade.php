@@ -159,7 +159,7 @@
             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center">
                 <div>
                     <h3 class="text-xl font-bold text-white">Analítica de Vendedores</h3>
-                    <p class="text-gray-400 text-sm">Comisiones (40% de 35.90) de hoteles activos.</p>
+                    <p class="text-gray-400 text-sm">Comisiones (40% de 49.90) de hoteles activos.</p>
                 </div>
                 <!-- Cálculo del Total General -->
                 @php

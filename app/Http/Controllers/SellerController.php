@@ -84,10 +84,10 @@ class SellerController extends Controller
                     $q->whereNotNull('seller_id'); 
                 })->count();
 
-            // - Directas: 100% de 35.90
-            // - Vendedores: 60% de 35.90 (porque 40% es del vendedor)
-            $directIncome = $paidDirectCount * 35.90;
-            $sellerIncome = $paidSellerCount * (35.90 * 0.60);
+            // - Directas: 100% de 49.90
+            // - Vendedores: 60% de 49.90 (porque 40% es del vendedor)
+            $directIncome = $paidDirectCount * 49.90;
+            $sellerIncome = $paidSellerCount * (49.90 * 0.60);
             
             $monthlyCommission = $directIncome + $sellerIncome;
             

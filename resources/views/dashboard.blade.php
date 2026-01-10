@@ -132,6 +132,7 @@
         return {
             showModal: false,
             selectedRoom: null,
+            selectedRoomNumber: '',
             selectedRoomType: '',
             selectedRoomPrice: 0,
             filterType: 'all',
@@ -165,6 +166,7 @@
 
             // Listen for room click events
             window.addEventListener('open-reservation-modal', (event) => {
+                this.selectedRoomNumber = event.detail.roomNumber;
                 this.selectedRoomType = event.detail.roomType;
                 this.selectedRoomPrice = event.detail.roomPrice;
                 this.openModal(event.detail.roomId, event.detail.hasReservation, event.detail.status);

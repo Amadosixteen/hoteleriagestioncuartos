@@ -9,6 +9,9 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     @stack('styles')
+    <style>
+        [x-cloak] { display: none !important; }
+    </style>
 </head>
 <body class="bg-gray-50 min-h-screen flex flex-col">
     @auth
@@ -37,6 +40,7 @@
                                 </svg>
                             </button>
                             <div x-show="openConfig" 
+                                 x-cloak 
                                  @click.away="openConfig = false"
                                  x-transition:enter="transition ease-out duration-100"
                                  x-transition:enter-start="opacity-0 scale-95"
@@ -94,6 +98,7 @@
 
                         <!-- Popover de Yape Desktop -->
                         <div x-show="showYape" 
+                             x-cloak 
                              @click.away="showYape = false"
                              x-transition:enter="transition ease-out duration-200"
                              x-transition:enter-start="opacity-0 translate-y-1"
@@ -106,7 +111,7 @@
                                     <div class="w-48 h-48 overflow-hidden rounded-xl shadow-md border-2 border-white bg-white">
                                         <img src="{{ asset('img/yape_qr.jpg') }}" alt="Yape QR" class="w-full h-[140%] object-cover object-top" style="image-rendering: -webkit-optimize-contrast; image-rendering: crisp-edges;">
                                     </div>
-                                    <p class="text-[10px] text-blue-400 text-center uppercase tracking-tighter mt-3 mb-2">Costo: S/ 35.90 por mes</p>
+                                    <p class="text-[10px] text-blue-400 text-center uppercase tracking-tighter mt-3 mb-2">Costo: S/ 49.90 por mes</p>
                                     
                                     <div class="w-full pt-2 border-t border-blue-200">
                                         <p class="text-[10px] text-blue-700 text-center leading-tight">
@@ -153,7 +158,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                         </svg>
                     </button>
-                    <div x-show="openConfig" class="pl-4 space-y-1 mt-1 border-l-2 border-gray-100 ml-3" x-transition>
+                    <div x-show="openConfig" class="pl-4 space-y-1 mt-1 border-l-2 border-gray-100 ml-3" x-cloak x-transition>
                         <a href="{{ route('floors.index') }}" class="block px-3 py-2 rounded-md text-sm font-medium text-gray-600 hover:bg-gray-50 {{ request()->routeIs('floors.*') ? 'text-blue-600 font-bold' : '' }}">Pisos</a>
                         <a href="{{ route('rooms.index') }}" class="block px-3 py-2 rounded-md text-sm font-medium text-gray-600 hover:bg-gray-50 {{ request()->routeIs('rooms.*') ? 'text-blue-600 font-bold' : '' }}">Habitaciones</a>
                         <a href="{{ route('rates.index') }}" class="block px-3 py-2 rounded-md text-sm font-medium text-gray-600 hover:bg-gray-50 {{ request()->routeIs('rates.*') ? 'text-blue-600 font-bold' : '' }}">Tarifas</a>
@@ -191,14 +196,14 @@
                         </button>
 
                         <!-- Info de Yape -->
-                        <div x-show="showYape" class="mt-4 p-3 bg-white border border-blue-100 rounded-md shadow-inner" x-transition>
+                        <div x-show="showYape" class="mt-4 p-3 bg-white border border-blue-100 rounded-md shadow-inner" x-cloak x-transition>
                             <p class="text-xs text-center text-gray-600 mb-3">Escanea el QR para yapear:</p>
                             <div class="flex justify-center mb-3">
                                 <div class="w-56 h-56 overflow-hidden rounded-xl border-2 border-gray-50 bg-white shadow-sm">
                                     <img src="{{ asset('img/yape_qr.jpg') }}" alt="Yape QR" class="w-full h-[140%] object-cover object-top" style="image-rendering: -webkit-optimize-contrast; image-rendering: crisp-edges;">
                                 </div>
                             </div>
-                            <p class="text-[10px] text-center text-gray-400 mb-3">Costo: S/ 35.90 por mes</p>
+                            <p class="text-[10px] text-center text-gray-400 mb-3">Costo: S/ 49.90 por mes</p>
                             
                             <div class="bg-blue-50 p-2 rounded border border-blue-100">
                                 <p class="text-[10px] text-blue-800 text-center">

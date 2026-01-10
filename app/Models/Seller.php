@@ -31,12 +31,9 @@ class Seller extends Model
         return "{$this->names} {$this->surnames}";
     }
 
-    /**
-     * Calculate active commissions (40% of 35.90 per active hotel).
-     */
     public function getActiveCommissionsAttribute(): float
     {
-        return $this->active_clients_count * 35.90 * 0.40;
+        return $this->active_clients_count * 49.90 * 0.40;
     }
 
     /**

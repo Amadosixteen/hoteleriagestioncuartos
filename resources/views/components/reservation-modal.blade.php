@@ -11,10 +11,18 @@
         @click.stop
     >
         <!-- Modal Header -->
-        <div class="flex items-center justify-between p-6 border-b border-gray-200">
-            <h3 class="text-xl font-semibold text-gray-900 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-2">
-                <span x-text="isEditing ? 'Editar Reserva' : 'Nueva Reserva'"></span>
-                <span class="text-xs px-2 py-0.5 bg-blue-100 text-blue-700 rounded-full w-fit" x-show="selectedRoomType" x-text="selectedRoomType"></span>
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between p-6 border-b border-gray-200 gap-4">
+            <h3 class="text-xl font-semibold text-gray-900 flex flex-col gap-1">
+                <div class="flex items-center gap-2">
+                    <span x-text="isEditing ? 'Editar Reserva' : 'Nueva Reserva'"></span>
+                    <span class="text-lg font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-lg border border-blue-100" x-text="'#' + selectedRoomNumber"></span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="text-xs px-2 py-0.5 bg-blue-100 text-blue-700 rounded-full w-fit" x-show="selectedRoomType" x-text="selectedRoomType"></span>
+                </div>
+            </h3>
+
+            <div class="flex flex-wrap items-center gap-3">
                 <div class="flex flex-wrap items-start sm:items-center gap-2">
                     <div class="flex flex-col items-start">
                         <span class="text-[10px] text-gray-500 font-medium" x-show="showCustomPriceInput || (isEditing && parseFloat(selectedRoomPrice) !== parseFloat(reservation?.price))">Precio Estándar</span>
@@ -55,11 +63,12 @@
                 </div>
                 <!-- Overtime Badge for Expired Rooms -->
                 <span x-show="(currentRoomStatus === 'expired' || isTimeExpired()) && reservation" 
-                      class="text-xs px-3 py-1 bg-red-600 text-white rounded-full font-black shadow-md animate-pulse w-fit mt-2 sm:mt-0"
+                      class="text-xs px-3 py-1 bg-red-600 text-white rounded-full font-black shadow-md animate-pulse w-fit"
                       x-text="'⚠️ Tiempo extra: ' + getOvertimeDisplay()">
                 </span>
-            </h3>
-            <button @click="closeModal()" class="text-gray-400 hover:text-gray-600">
+            </div>
+
+            <button @click="closeModal()" class="text-gray-400 hover:text-gray-600 shrink-0">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                 </svg>

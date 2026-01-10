@@ -22,7 +22,7 @@
     @if($hasReservation) 
         data-reservation-id="{{ $reservation->id }}"
     @endif
-    @click="window.dispatchEvent(new CustomEvent('open-reservation-modal', { detail: { roomId: {{ $room->id }}, roomType: '{{ $room->type }}', roomPrice: {{ $room->price }}, hasReservation: {{ $hasReservation ? 'true' : 'false' }}, status: '{{ $room->status }}' } }))"
+    @click="window.dispatchEvent(new CustomEvent('open-reservation-modal', { detail: { roomId: {{ $room->id }}, roomNumber: '{{ $room->room_number }}', roomType: '{{ $room->type }}', roomPrice: {{ $room->price }}, hasReservation: {{ $hasReservation ? 'true' : 'false' }}, status: '{{ $room->status }}' } }))"
 >
     <!-- Overtime Badge (for occupied/expired rooms) -->
     @if($hasReservation)

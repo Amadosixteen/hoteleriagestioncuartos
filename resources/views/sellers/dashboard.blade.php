@@ -29,7 +29,7 @@
                                       ->filter(function($u) { return $u->hasActiveSubscription(); })->count() > 0; 
                     })->count();
                     // Solo comisionar lo pagado
-                    $monthlyCommission = $activeClients * 35.90 * 0.40; 
+                    $monthlyCommission = $activeClients * 49.90 * 0.40; 
                 @endphp
             @endif
 
@@ -169,14 +169,14 @@
                                         @if($user && $user->hasActiveSubscription() && $user->subscription_type !== 'trial')
                                             @if(auth()->user()->isSuperAdmin())
                                                 @if(!$tenant->seller_id)
-                                                    <span class="text-sm font-bold text-green-600">+ S/ 35.90</span>
+                                                    <span class="text-sm font-bold text-green-600">+ S/ 49.90</span>
                                                     <div class="text-[9px] text-gray-400 uppercase">Venta Directa (100%)</div>
                                                 @else
-                                                    <span class="text-sm font-bold text-indigo-600">+ S/ 21.54</span>
+                                                    <span class="text-sm font-bold text-indigo-600">+ S/ 29.94</span>
                                                     <div class="text-[9px] text-gray-400 uppercase">Proporción SaaS (60%)</div>
                                                 @endif
                                             @else
-                                                <span class="text-sm font-bold text-green-600">+ S/ 14.36</span>
+                                                <span class="text-sm font-bold text-green-600">+ S/ 19.96</span>
                                                 <div class="text-[9px] text-gray-400 uppercase">Comisión (40%)</div>
                                             @endif
                                         @else
