@@ -54,7 +54,7 @@
                     </button>
                 </div>
                 <!-- Overtime Badge for Expired Rooms -->
-                <span x-show="currentRoomStatus === 'expired' && reservation" 
+                <span x-show="(currentRoomStatus === 'expired' || isTimeExpired()) && reservation" 
                       class="text-xs px-3 py-1 bg-red-600 text-white rounded-full font-black shadow-md animate-pulse"
                       x-text="'⚠️ Tiempo extra: ' + getOvertimeDisplay()">
                 </span>
@@ -76,7 +76,8 @@
                 </div>
 
                 <!-- Overtime Charge Section (for expired reservations) -->
-                <template x-if="currentRoomStatus === 'expired' && isEditing">
+                <!-- Overtime Charge Section (for expired reservations) -->
+                <template x-if="(currentRoomStatus === 'expired' || isTimeExpired()) && isEditing">
                     <div>
                         <div x-show="!hasOvertimeCharge()" class="mb-6 bg-red-50 border-2 border-red-300 rounded-xl p-5">
                             <div class="flex items-start justify-between mb-4">
@@ -320,7 +321,7 @@
                     <!-- Cleaning Toggle Button -->
                     <button 
                         type="button"
-                        x-show="!isEditing || currentRoomStatus === 'expired'"
+                        x-show="!isEditing || currentRoomStatus === 'expired' || isTimeExpired()"
                         @click="toggleCleaning()"
                         :disabled="isLoading"
                         class="px-4 py-2 rounded-lg font-medium transition-colors disabled:opacity-50"

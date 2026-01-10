@@ -14,8 +14,25 @@ class Room extends Model
         'type',
         'price',
         'position',
-        'status',
+    'status',
     ];
+
+    /**
+     * Get the room status, dynamically checking for expiration.
+     */
+    public function getStatusAttribute($value)
+    {
+        // If the status is occupied, check if it's actually expired
+        if ($value === 'occupied') {
+            $reservation = $this->activeReservation;
+            if ($reservation && $reservation->check_out_at && now()->greaterThan($reservation->check_out_at)) {
+                return 'expired';
+            }
+        }
+
+        return $value;
+    }
+
 
     /**
      * Map of statuses in English to Spanish.

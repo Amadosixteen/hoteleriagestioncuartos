@@ -229,6 +229,14 @@
             return Math.abs(current - calculated) > 0.01;
         },
 
+        isTimeExpired() {
+            if (!this.reservation || !this.reservation.check_out_at) return false;
+            const checkoutAt = new Date(this.reservation.check_out_at);
+            const now = new Date();
+            return now > checkoutAt;
+        },
+
+
         async applyOvertimeCharge() {
             if (!this.reservation || this.isLoading) return;
             
